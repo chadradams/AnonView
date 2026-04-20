@@ -8,6 +8,12 @@ public struct ThreadDetailView: View {
     @State private var selectedImageURL: URL?
 
     private let nsfwFilter = NSFWFilterService()
+    private var isImageViewerPresented: Binding<Bool> {
+        Binding(
+            get: { selectedImageURL != nil },
+            set: { if !$0 { selectedImageURL = nil } }
+        )
+    }
 
     public init(board: Board, threadID: Int) {
         self.board = board
@@ -71,12 +77,11 @@ public struct ThreadDetailView: View {
         }
         .task { await viewModel.loadPosts() }
         .refreshable { await viewModel.loadPosts(forceRefresh: true) }
-        .fullScreenCover(
-            isPresented: Binding(
-                get: { selectedImageURL != nil },
-                set: { if !$0 { selectedImageURL = nil } }
-            )
-        ) {
+#if os(macOS)
+        .sheet(isPresented: isImageViewerPresented) {
+#else
+        .fullScreenCover(isPresented: isImageViewerPresented) {
+#endif
             if let url = selectedImageURL {
                 ImageViewer(imageURL: url)
             }
