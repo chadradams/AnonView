@@ -35,11 +35,11 @@ public struct ThreadDetailView: View {
                                 Text(post.author ?? "Anonymous")
                                     .font(.subheadline.weight(.semibold))
                                 Spacer()
-                                Link(
-                                    destination: URL(string: "https://boards.4chan.org/\(board.id)/thread/\(threadID)#p\(post.id)")!
-                                ) {
-                                    Text("Original")
-                                        .font(.caption.weight(.semibold))
+                                if let originalURL = URL(string: "https://boards.4chan.org/\(board.id)/thread/\(threadID)#p\(post.id)") {
+                                    Link(destination: originalURL) {
+                                        Text("Original")
+                                            .font(.caption.weight(.semibold))
+                                    }
                                 }
                                 Text(Date(timeIntervalSince1970: post.timestamp), style: .time)
                                     .font(.caption)

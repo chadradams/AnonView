@@ -35,7 +35,7 @@ extension String {
             let href = decodeHTMLEntities(in: nsString.substring(with: match.range(at: 1)))
             let linkText = nsString.substring(with: match.range(at: 2)).lightlyParsedHTML
             let destination = normalizedLinkDestination(for: href)
-            let escapedText = linkText.replacingOccurrences(of: "[", with: "\\[").replacingOccurrences(of: "]", with: "\\]")
+            let escapedText = escapeMarkdownText(linkText)
             let markdownLink = "[\(escapedText)](\(destination))"
 
             if let range = Range(match.range, in: transformed) {
@@ -102,4 +102,13 @@ private func decodeHTMLEntities(in source: String) -> String {
     }
 
     return decoded
+}
+
+private func escapeMarkdownText(_ source: String) -> String {
+    let markdownSpecials = ["\\", "[", "]", "(", ")", "*", "_", "`", "~", ">", "#", "+", "-", "!", "|", "{", "}", "."]
+    var escaped = source
+    for special in markdownSpecials {
+        escaped = escaped.replacingOccurrences(of: special, with: "\\\(special)")
+    }
+    return escaped
 }
