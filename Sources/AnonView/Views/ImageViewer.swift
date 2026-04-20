@@ -33,11 +33,13 @@ public struct ImageViewer: View {
             .toolbar {
 #if os(macOS)
                 ToolbarItem(placement: .navigation) {
-#else
-                ToolbarItem(placement: .topBarLeading) {
-#endif
                     Button("Close") { dismiss() }
                 }
+#else
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Close") { dismiss() }
+                }
+#endif
             }
         }
         .task {
