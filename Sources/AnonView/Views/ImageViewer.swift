@@ -32,7 +32,7 @@ public struct ImageViewer: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: closeButtonPlacement) {
                     Button("Close") { dismiss() }
                 }
             }
@@ -55,8 +55,14 @@ private extension Data {
 }
 
 #if canImport(UIKit)
-typealias PlatformImage = UIImage
+private typealias PlatformImage = UIImage
 #elseif canImport(AppKit)
-typealias PlatformImage = NSImage
+private typealias PlatformImage = NSImage
+#endif
+
+#if os(macOS)
+private let closeButtonPlacement: ToolbarItemPlacement = .navigation
+#else
+private let closeButtonPlacement: ToolbarItemPlacement = .topBarLeading
 #endif
 #endif

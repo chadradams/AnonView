@@ -48,8 +48,8 @@ private extension Data {
 }
 
 #if canImport(UIKit)
-typealias PlatformImage = UIImage
+private typealias PlatformImage = UIImage
 #elseif canImport(AppKit)
-typealias PlatformImage = NSImage
+private typealias PlatformImage = NSImage
 #endif
 #endif
