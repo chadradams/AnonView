@@ -13,7 +13,7 @@ extension String {
             options: .regularExpression
         )
 
-        return strippedTags.decodingHTMLEntities
+        return decodeHTMLEntities(in: strippedTags)
     }
 
     var commentMarkdown: String {
@@ -32,7 +32,7 @@ extension String {
         var transformed = replacedBreaks
 
         for match in matches.reversed() where match.numberOfRanges == 3 {
-            let href = nsString.substring(with: match.range(at: 1)).decodingHTMLEntities
+            let href = decodeHTMLEntities(in: nsString.substring(with: match.range(at: 1)))
             let linkText = nsString.substring(with: match.range(at: 2)).lightlyParsedHTML
             let destination = normalizedLinkDestination(for: href)
             let escapedText = linkText.replacingOccurrences(of: "[", with: "\\[").replacingOccurrences(of: "]", with: "\\]")
@@ -48,58 +48,58 @@ extension String {
             with: "",
             options: .regularExpression
         )
-        return strippedTags.decodingHTMLEntities
+        return decodeHTMLEntities(in: strippedTags)
+    }
+}
+
+private func normalizedLinkDestination(for href: String) -> String {
+    let trimmed = href.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    if trimmed.hasPrefix("#p") {
+        let postID = trimmed.dropFirst(2)
+        return "anonview://post/\(postID)"
     }
 
-    private func normalizedLinkDestination(for href: String) -> String {
-        let trimmed = href.trimmingCharacters(in: .whitespacesAndNewlines)
-
-        if trimmed.hasPrefix("#p") {
-            let postID = trimmed.dropFirst(2)
-            return "anonview://post/\(postID)"
-        }
-
-        if trimmed.hasPrefix("//") {
-            return "https:\(trimmed)"
-        }
-
-        if trimmed.hasPrefix("/") {
-            return "https://boards.4chan.org\(trimmed)"
-        }
-
-        return trimmed
+    if trimmed.hasPrefix("//") {
+        return "https:\(trimmed)"
     }
 
-    private var decodingHTMLEntities: String {
-        var decoded = self
-        let entities: [String: String] = [
-            "&amp;": "&",
-            "&lt;": "<",
-            "&gt;": ">",
-            "&quot;": "\"",
-            "&#039;": "'",
-            "&#39;": "'",
-            "&nbsp;": " ",
-        ]
+    if trimmed.hasPrefix("/") {
+        return "https://boards.4chan.org\(trimmed)"
+    }
 
-        for (entity, value) in entities {
-            decoded = decoded.replacingOccurrences(of: entity, with: value)
-        }
+    return trimmed
+}
 
-        let numericPattern = #"&#([0-9]+);"#
-        if let regex = try? NSRegularExpression(pattern: numericPattern) {
-            let ns = decoded as NSString
-            let matches = regex.matches(in: decoded, range: NSRange(location: 0, length: ns.length))
-            for match in matches.reversed() where match.numberOfRanges == 2 {
-                let codePointString = ns.substring(with: match.range(at: 1))
-                if let codePoint = UInt32(codePointString),
-                   let scalar = UnicodeScalar(codePoint),
-                   let range = Range(match.range, in: decoded) {
-                    decoded.replaceSubrange(range, with: String(Character(scalar)))
-                }
+private func decodeHTMLEntities(in source: String) -> String {
+    var decoded = source
+    let entities: [String: String] = [
+        "&amp;": "&",
+        "&lt;": "<",
+        "&gt;": ">",
+        "&quot;": "\"",
+        "&#039;": "'",
+        "&#39;": "'",
+        "&nbsp;": " ",
+    ]
+
+    for (entity, value) in entities {
+        decoded = decoded.replacingOccurrences(of: entity, with: value)
+    }
+
+    let numericPattern = #"&#([0-9]+);"#
+    if let regex = try? NSRegularExpression(pattern: numericPattern) {
+        let ns = decoded as NSString
+        let matches = regex.matches(in: decoded, range: NSRange(location: 0, length: ns.length))
+        for match in matches.reversed() where match.numberOfRanges == 2 {
+            let codePointString = ns.substring(with: match.range(at: 1))
+            if let codePoint = UInt32(codePointString),
+               let scalar = UnicodeScalar(codePoint),
+               let range = Range(match.range, in: decoded) {
+                decoded.replaceSubrange(range, with: String(Character(scalar)))
             }
         }
-
-        return decoded
     }
+
+    return decoded
 }
