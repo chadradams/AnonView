@@ -32,9 +32,15 @@ public struct ImageViewer: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: closeButtonPlacement) {
+#if os(macOS)
+                ToolbarItem(placement: .navigation) {
                     Button("Close") { dismiss() }
                 }
+#else
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Close") { dismiss() }
+                }
+#endif
             }
         }
         .task {
@@ -60,9 +66,4 @@ private typealias PlatformImage = UIImage
 private typealias PlatformImage = NSImage
 #endif
 
-#if os(macOS)
-private let closeButtonPlacement: ToolbarItemPlacement = .navigation
-#else
-private let closeButtonPlacement: ToolbarItemPlacement = .topBarLeading
-#endif
 #endif
