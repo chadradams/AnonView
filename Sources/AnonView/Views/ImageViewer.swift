@@ -14,6 +14,9 @@ public struct ImageViewer: View {
     @State private var image: Image?
 
     private let imageLoader = ImageLoader()
+    private var closeButton: some View {
+        Button("Close") { dismiss() }
+    }
     public var body: some View {
         NavigationStack {
             ZStack {
@@ -33,11 +36,11 @@ public struct ImageViewer: View {
             .toolbar {
 #if os(macOS)
                 ToolbarItem(placement: .navigation) {
-                    Button("Close") { dismiss() }
+                    closeButton
                 }
 #else
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Close") { dismiss() }
+                    closeButton
                 }
 #endif
             }
