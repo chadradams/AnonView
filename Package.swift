@@ -17,7 +17,18 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "AnonView"
+            name: "AnonView",
+            linkerSettings: [
+                .unsafeFlags(
+                    [
+                        "-Xlinker", "-sectcreate",
+                        "-Xlinker", "__TEXT",
+                        "-Xlinker", "__info_plist",
+                        "-Xlinker", "Sources/AnonView/App/Info.plist",
+                    ],
+                    .when(platforms: [.iOS, .macOS])
+                ),
+            ]
         ),
         .testTarget(
             name: "AnonViewTests",
