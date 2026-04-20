@@ -11,11 +11,13 @@
 		054C598A75CBB3FD8E5278FF /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02580009C812C498F85CF8EE /* Thread.swift */; };
 		124EF8B8CCDF4247C4B4B4DA /* NSFWFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A3FF206A455C2A85B6A9DB /* NSFWFilterService.swift */; };
 		13842A97289051DE590A594C /* ThreadListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC41C84846B78476D77C1201 /* ThreadListViewModel.swift */; };
+		2141045FE939B153246A3470 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D45B9E1065338AA23377816 /* Assets.xcassets */; };
 		226441598F28B22B6BC01A93 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = D065E44CA8259218D5820AE2 /* Board.swift */; };
 		24C001678C6C0B5DE3DF4592 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED490810E5E707B51C22B34 /* SettingsView.swift */; };
 		265A2F4A40543D55837E72DD /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 387F583F7AC603A305A240E9 /* Post.swift */; };
 		2ED270BB84F2272310D18F65 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED490810E5E707B51C22B34 /* SettingsView.swift */; };
 		32A13347AB36CAA0B952A43B /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1232C369D3BD525EB8EDA613 /* CacheManager.swift */; };
+		35CB86F91F9718D58E5BBCA6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D45B9E1065338AA23377816 /* Assets.xcassets */; };
 		3814845268C64CEBBAFA65FB /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = D065E44CA8259218D5820AE2 /* Board.swift */; };
 		4259D229336BEF9FA4E31B55 /* ThreadDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F65E12EDFAE41CE735A9D7C /* ThreadDetailView.swift */; };
 		43D79C657999E25570DC3940 /* BoardListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF042BA74E09AFC552D92C4 /* BoardListViewModel.swift */; };
@@ -59,6 +61,7 @@
 		416E1A8B514004BE252CBC2A /* ImageAttachment.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImageAttachment.swift; path = Sources/AnonView/Models/ImageAttachment.swift; sourceTree = "<group>"; };
 		45DB15E16BF7F26A1D1ED94A /* AnonView macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AnonView macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4908314A79FA3411B0D7A786 /* APIClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = APIClient.swift; path = Sources/AnonView/Services/APIClient.swift; sourceTree = "<group>"; };
+		4D45B9E1065338AA23377816 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Sources/AnonView/App/Assets.xcassets; sourceTree = "<group>"; };
 		56B6EB73B650714F871F1B5F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		5ED490810E5E707B51C22B34 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = Sources/AnonView/Views/SettingsView.swift; sourceTree = "<group>"; };
 		5FDF1C1DF923A4D2CC79C0C4 /* AnonView iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AnonView iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -66,6 +69,7 @@
 		6BD51198CCCEC71628AA0148 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		7C1597FEF608136581D0407F /* ImageViewer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImageViewer.swift; path = Sources/AnonView/Views/ImageViewer.swift; sourceTree = "<group>"; };
 		8E1187E4BFC18A7409174A60 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = Sources/AnonView/App/Info.plist; sourceTree = "<group>"; };
+		92A8F527827A0603613ED44A /* Info-macOS.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-macOS.plist"; path = "Sources/AnonView/App/Info-macOS.plist"; sourceTree = "<group>"; };
 		9595AE9542311B9232A7A393 /* AnonView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnonView.swift; path = Sources/AnonView/AnonView.swift; sourceTree = "<group>"; };
 		9CF042BA74E09AFC552D92C4 /* BoardListViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BoardListViewModel.swift; path = Sources/AnonView/ViewModels/BoardListViewModel.swift; sourceTree = "<group>"; };
 		AC081B81C731986439C20AEC /* RemoteImageView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RemoteImageView.swift; path = Sources/AnonView/Views/RemoteImageView.swift; sourceTree = "<group>"; };
@@ -76,6 +80,7 @@
 		D065E44CA8259218D5820AE2 /* Board.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Board.swift; path = Sources/AnonView/Models/Board.swift; sourceTree = "<group>"; };
 		D470E38F299018455AC1D9AA /* ImageLoader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImageLoader.swift; path = Sources/AnonView/Services/ImageLoader.swift; sourceTree = "<group>"; };
 		DC41C84846B78476D77C1201 /* ThreadListViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ThreadListViewModel.swift; path = Sources/AnonView/ViewModels/ThreadListViewModel.swift; sourceTree = "<group>"; };
+		EC234B76EFC5BEBD161FD477 /* Info-iOS.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-iOS.plist"; path = "Sources/AnonView/App/Info-iOS.plist"; sourceTree = "<group>"; };
 		F7A3FF206A455C2A85B6A9DB /* NSFWFilterService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NSFWFilterService.swift; path = Sources/AnonView/Services/NSFWFilterService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -189,6 +194,9 @@
 			children = (
 				8E1187E4BFC18A7409174A60 /* Info.plist */,
 				60FD3A9C8BAE95226AAE89B7 /* AnonViewApp.swift */,
+				4D45B9E1065338AA23377816 /* Assets.xcassets */,
+				EC234B76EFC5BEBD161FD477 /* Info-iOS.plist */,
+				92A8F527827A0603613ED44A /* Info-macOS.plist */,
 			);
 			name = App;
 			sourceTree = "<group>";
@@ -299,6 +307,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35CB86F91F9718D58E5BBCA6 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,6 +315,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2141045FE939B153246A3470 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,7 +388,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = Sources/AnonView/App/Info.plist;
+				INFOPLIST_FILE = "Sources/AnonView/App/Info-macOS.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
@@ -399,7 +409,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = Sources/AnonView/App/Info.plist;
+				INFOPLIST_FILE = "Sources/AnonView/App/Info-macOS.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
@@ -474,7 +484,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = Sources/AnonView/App/Info.plist;
+				INFOPLIST_FILE = "Sources/AnonView/App/Info-iOS.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
@@ -497,7 +507,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = Sources/AnonView/App/Info.plist;
+				INFOPLIST_FILE = "Sources/AnonView/App/Info-iOS.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.0;
