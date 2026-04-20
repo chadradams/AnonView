@@ -21,12 +21,18 @@ public struct ImageViewer: View {
         guard imageURLs.indices.contains(currentIndex) else { return nil }
         return imageURLs[currentIndex]
     }
+    private var imageCountLabel: String {
+        imageURLs.isEmpty ? "0/0" : "\(currentIndex + 1)/\(imageURLs.count)"
+    }
 
     public var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            if let image {
+            if imageURLs.isEmpty {
+                Text("No images available")
+                    .foregroundStyle(.white)
+            } else if let image {
                 image
                     .resizable()
                     .scaledToFit()
@@ -70,7 +76,7 @@ public struct ImageViewer: View {
 
                     Spacer()
 
-                    Text("\(currentIndex + 1)/\(max(imageURLs.count, 1))")
+                    Text(imageCountLabel)
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8)
@@ -105,6 +111,12 @@ public struct ImageViewer: View {
                 }
         )
         .onAppear {
+            if imageURLs.isEmpty {
+                loadFailed = true
+                image = nil
+                AppLogger.error("Image viewer opened with no images")
+                return
+            }
             currentIndex = min(max(initialIndex, 0), max(imageURLs.count - 1, 0))
             AppLogger.info("Image viewer opened with \(imageURLs.count) images, starting at \(currentIndex)")
         }
