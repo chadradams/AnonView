@@ -2,6 +2,12 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import Foundation
+
+let embeddedInfoPlistPath = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent()
+    .appendingPathComponent("Sources/AnonView/App/Info.plist")
+    .path
 
 let package = Package(
     name: "AnonView",
@@ -17,7 +23,19 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "AnonView"
+            name: "AnonView",
+            exclude: ["App/Info.plist"],
+            linkerSettings: [
+                .unsafeFlags(
+                    [
+                        "-Xlinker", "-sectcreate",
+                        "-Xlinker", "__TEXT",
+                        "-Xlinker", "__info_plist",
+                        "-Xlinker", embeddedInfoPlistPath,
+                    ],
+                    .when(platforms: [.iOS, .macOS, .tvOS, .watchOS, .visionOS])
+                ),
+            ]
         ),
         .testTarget(
             name: "AnonViewTests",
