@@ -117,7 +117,7 @@ public struct ImageViewer: View {
                 AppLogger.error("Image viewer opened with no images")
                 return
             }
-            currentIndex = min(max(initialIndex, 0), max(imageURLs.count - 1, 0))
+            currentIndex = max(0, min(initialIndex, imageURLs.count - 1))
             AppLogger.info("Image viewer opened with \(imageURLs.count) images, starting at \(currentIndex)")
         }
         .task(id: currentURL) {

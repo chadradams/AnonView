@@ -5,7 +5,7 @@ public struct ThreadListView: View {
     private let board: Board
     private let selection: Binding<ThreadSummary?>?
     @StateObject private var viewModel: ThreadListViewModel
-    private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
 
     public init(board: Board, selection: Binding<ThreadSummary?>? = nil) {
         self.board = board

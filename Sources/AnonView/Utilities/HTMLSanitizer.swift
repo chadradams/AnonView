@@ -1,5 +1,17 @@
 import Foundation
 
+private let htmlEntityReplacements: [String: String] = [
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&quot;": "\"",
+    "&#039;": "'",
+    "&#39;": "'",
+    "&nbsp;": " ",
+]
+
+private let markdownSpecialCharacters = ["\\", "[", "]", "(", ")", "*", "_", "`", "~", ">", "#", "+", "-", "!", "|", "{", "}", "."]
+
 extension String {
     var lightlyParsedHTML: String {
         let replacedBreaks = self
@@ -73,17 +85,7 @@ private func normalizedLinkDestination(for href: String) -> String {
 
 private func decodeHTMLEntities(in source: String) -> String {
     var decoded = source
-    let entities: [String: String] = [
-        "&amp;": "&",
-        "&lt;": "<",
-        "&gt;": ">",
-        "&quot;": "\"",
-        "&#039;": "'",
-        "&#39;": "'",
-        "&nbsp;": " ",
-    ]
-
-    for (entity, value) in entities {
+    for (entity, value) in htmlEntityReplacements {
         decoded = decoded.replacingOccurrences(of: entity, with: value)
     }
 
@@ -105,9 +107,8 @@ private func decodeHTMLEntities(in source: String) -> String {
 }
 
 private func escapeMarkdownText(_ source: String) -> String {
-    let markdownSpecials = ["\\", "[", "]", "(", ")", "*", "_", "`", "~", ">", "#", "+", "-", "!", "|", "{", "}", "."]
     var escaped = source
-    for special in markdownSpecials {
+    for special in markdownSpecialCharacters {
         escaped = escaped.replacingOccurrences(of: special, with: "\\\(special)")
     }
     return escaped
