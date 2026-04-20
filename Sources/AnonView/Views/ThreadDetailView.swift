@@ -79,13 +79,17 @@ public struct ThreadDetailView: View {
         .refreshable { await viewModel.loadPosts(forceRefresh: true) }
 #if os(macOS)
         .sheet(isPresented: isImageViewerPresented) {
-#else
-        .fullScreenCover(isPresented: isImageViewerPresented) {
-#endif
             if let url = selectedImageURL {
                 ImageViewer(imageURL: url)
             }
         }
+#else
+        .fullScreenCover(isPresented: isImageViewerPresented) {
+            if let url = selectedImageURL {
+                ImageViewer(imageURL: url)
+            }
+        }
+#endif
     }
 }
 #endif
