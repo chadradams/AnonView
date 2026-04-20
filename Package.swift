@@ -18,6 +18,7 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "AnonView",
+            exclude: ["App/Info.plist"],
             linkerSettings: [
                 .unsafeFlags(
                     [
