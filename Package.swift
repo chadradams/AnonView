@@ -24,7 +24,12 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "AnonView",
-            exclude: ["App/Info.plist"],
+            exclude: [
+                "App/Info.plist",
+                "App/Info-iOS.plist",
+                "App/Info-macOS.plist",
+                "App/Assets.xcassets",
+            ],
             linkerSettings: [
                 .unsafeFlags(
                     [
