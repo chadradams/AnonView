@@ -50,8 +50,13 @@ public struct ThreadDetailView: View {
                             }
 
                             if let comment = post.comment, !comment.isEmpty {
-                                Text(comment.attributedCommentText)
-                                    .font(.body)
+                                if let parsed = try? AttributedString(markdown: comment.commentMarkdown) {
+                                    Text(parsed)
+                                        .font(.body)
+                                } else {
+                                    Text(comment.lightlyParsedHTML)
+                                        .font(.body)
+                                }
                             }
 
                             if let attachment = post.attachment,

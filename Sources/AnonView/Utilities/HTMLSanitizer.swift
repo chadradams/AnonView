@@ -16,15 +16,7 @@ extension String {
         return strippedTags.decodingHTMLEntities
     }
 
-    var attributedCommentText: AttributedString {
-        let markdown = htmlCommentToMarkdown
-        if let attributed = try? AttributedString(markdown: markdown, options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)) {
-            return attributed
-        }
-        return AttributedString(lightlyParsedHTML)
-    }
-
-    private var htmlCommentToMarkdown: String {
+    var commentMarkdown: String {
         let replacedBreaks = self
             .replacingOccurrences(of: "<br>", with: "\n")
             .replacingOccurrences(of: "<br/>", with: "\n")
