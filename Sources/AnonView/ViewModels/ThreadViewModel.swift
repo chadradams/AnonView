@@ -20,6 +20,7 @@ public final class ThreadViewModel: ObservableObject {
     }
 
     public func loadPosts(forceRefresh: Bool = false) async {
+        AppLogger.info("Loading posts for /\(boardID)/ thread \(threadID) (forceRefresh: \(forceRefresh))")
         isLoading = true
         defer { isLoading = false }
 
@@ -27,6 +28,7 @@ public final class ThreadViewModel: ObservableObject {
         if !forceRefresh,
            let cached = cacheManager.cachedData(forKey: cacheKey),
            let decoded = try? JSONDecoder().decode([Post].self, from: cached) {
+            AppLogger.info("Loaded posts from cache for /\(boardID)/ thread \(threadID): \(decoded.count)")
             posts = decoded.sorted { $0.timestamp < $1.timestamp }
             return
         }
@@ -35,8 +37,10 @@ public final class ThreadViewModel: ObservableObject {
             let remotePosts = try await apiClient.fetchThread(boardID: boardID, threadID: threadID)
             posts = remotePosts
             cacheManager.cache(data: try JSONEncoder().encode(remotePosts), forKey: cacheKey)
+            AppLogger.info("Loaded posts from network for /\(boardID)/ thread \(threadID): \(remotePosts.count)")
             errorMessage = nil
         } catch {
+            AppLogger.error("Failed to load posts for /\(boardID)/ thread \(threadID): \(error.localizedDescription)")
             errorMessage = error.localizedDescription
         }
     }

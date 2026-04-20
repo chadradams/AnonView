@@ -36,6 +36,7 @@ private struct SplitRootView: View {
         } content: {
             if let selectedBoard {
                 ThreadListView(board: selectedBoard, selection: $selectedThread)
+                    .id(selectedBoard.id)
             } else {
                 ContentUnavailableView("Select a Board", systemImage: "list.bullet.rectangle")
             }
