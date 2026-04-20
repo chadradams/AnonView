@@ -33,7 +33,7 @@ let package = Package(
                         "-Xlinker", "__info_plist",
                         "-Xlinker", embeddedInfoPlistPath,
                     ],
-                    .when(platforms: [.iOS, .macOS])
+                    .when(platforms: [.iOS, .macOS, .tvOS, .watchOS, .visionOS])
                 ),
             ]
         ),
