@@ -14,6 +14,13 @@ public struct ImageViewer: View {
     @State private var image: Image?
 
     private let imageLoader = ImageLoader()
+    private var closeButtonPlacement: ToolbarItemPlacement {
+#if os(macOS)
+        .navigation
+#else
+        .topBarLeading
+#endif
+    }
 
     public var body: some View {
         NavigationStack {
@@ -60,9 +67,4 @@ private typealias PlatformImage = UIImage
 private typealias PlatformImage = NSImage
 #endif
 
-#if os(macOS)
-private let closeButtonPlacement: ToolbarItemPlacement = .navigation
-#else
-private let closeButtonPlacement: ToolbarItemPlacement = .topBarLeading
-#endif
 #endif
