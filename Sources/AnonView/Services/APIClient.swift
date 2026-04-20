@@ -69,18 +69,21 @@ public struct APIClient: Sendable {
 
     public func fetchBoards() async throws -> [Board] {
         guard let url = boardsURL() else { throw APIError.invalidURL }
+        AppLogger.info("Fetching boards from \(url.absoluteString)")
         let response: BoardListResponse = try await request(url)
         return response.boards
     }
 
     public func fetchCatalog(boardID: String) async throws -> [ThreadSummary] {
         guard let url = catalogURL(boardID: boardID) else { throw APIError.invalidURL }
+        AppLogger.info("Fetching catalog for /\(boardID)/ from \(url.absoluteString)")
         let pages: [CatalogPage] = try await request(url)
         return pages.flatMap(\.threads)
     }
 
     public func fetchThread(boardID: String, threadID: Int) async throws -> [Post] {
         guard let url = threadURL(boardID: boardID, threadID: threadID) else { throw APIError.invalidURL }
+        AppLogger.info("Fetching thread \(threadID) for /\(boardID)/ from \(url.absoluteString)")
         let response: ThreadResponse = try await request(url)
         return response.posts.sorted { $0.timestamp < $1.timestamp }
     }
@@ -97,11 +100,13 @@ public struct APIClient: Sendable {
                     throw APIError.invalidResponse
                 }
                 guard 200..<300 ~= http.statusCode else {
+                    AppLogger.error("HTTP status \(http.statusCode) for \(url.absoluteString)")
                     throw APIError.httpStatus(http.statusCode)
                 }
                 return try decoder.decode(Response.self, from: data)
             } catch {
                 lastError = error
+                AppLogger.error("Request failed for \(url.absoluteString), attempt \(attempt + 1)/\(maxRetryCount + 1): \(error.localizedDescription)")
                 if attempt == maxRetryCount {
                     throw error
                 }

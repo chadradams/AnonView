@@ -5,6 +5,7 @@ public struct ThreadListView: View {
     private let board: Board
     private let selection: Binding<ThreadSummary?>?
     @StateObject private var viewModel: ThreadListViewModel
+    private let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
 
     public init(board: Board, selection: Binding<ThreadSummary?>? = nil) {
         self.board = board
@@ -13,19 +14,25 @@ public struct ThreadListView: View {
     }
 
     public var body: some View {
-        Group {
-            if let selection {
-                List(viewModel.threads, selection: selection) { thread in
-                    threadRow(thread)
-                        .tag(thread)
-                }
-            } else {
-                List(viewModel.threads) { thread in
-                    NavigationLink(value: thread) {
-                        threadRow(thread)
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 12) {
+                ForEach(viewModel.threads) { thread in
+                    if let selection {
+                        Button {
+                            selection.wrappedValue = thread
+                        } label: {
+                            threadCard(thread, isSelected: selection.wrappedValue?.id == thread.id)
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        NavigationLink(value: thread) {
+                            threadCard(thread, isSelected: false)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
+            .padding(12)
         }
         .navigationTitle("/\(board.id)/")
         .overlay {
@@ -39,8 +46,34 @@ public struct ThreadListView: View {
         .refreshable { await viewModel.loadThreads(forceRefresh: true) }
     }
 
-    private func threadRow(_ thread: ThreadSummary) -> some View {
+    private func threadCard(_ thread: ThreadSummary, isSelected: Bool) -> some View {
         VStack(alignment: .leading, spacing: 6) {
+            if let attachment = thread.attachment,
+               let thumbURL = attachment.thumbnailURL(boardID: board.id) {
+                ZStack(alignment: .bottomTrailing) {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.secondary.opacity(0.08))
+                        .frame(height: 150)
+                        .offset(x: -8, y: -8)
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(.secondary.opacity(0.14))
+                        .frame(height: 150)
+                        .offset(x: -4, y: -4)
+                    RemoteImageView(url: thumbURL)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    Label("\(thread.imageCount)", systemImage: "photo")
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 5)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .padding(8)
+                }
+                .padding(.top, 8)
+                .padding(.leading, 8)
+            }
+
             if let subject = thread.subject, !subject.isEmpty {
                 Text(subject)
                     .font(.headline)
@@ -59,7 +92,16 @@ public struct ThreadListView: View {
             .font(.caption)
             .foregroundStyle(.secondary)
         }
-        .padding(.vertical, 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(isSelected ? .accent.opacity(0.14) : .secondary.opacity(0.08))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(isSelected ? .accent : .clear, lineWidth: 1.2)
+        )
     }
 }
 #endif
