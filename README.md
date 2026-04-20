@@ -6,7 +6,7 @@ A 4chan app for iOS and macOS.
 
 ### Requirements
 - Xcode 16+ (for running the app on iOS/macOS)
-- Swift 6.3 toolchain (for command-line build/test)
+- Swift 6.1+ toolchain (for command-line build/test)
 
 ### Run locally (Xcode)
 1. Open `/home/runner/work/AnonView/AnonView/Package.swift` in Xcode.
