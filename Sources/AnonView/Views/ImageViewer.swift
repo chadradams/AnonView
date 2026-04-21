@@ -12,6 +12,7 @@ public struct ImageViewer: View {
     let boardID: String
     let initialIndex: Int
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
 
     @State private var zoom: CGFloat = 1
     @State private var thumbnailImage: Image?
@@ -179,8 +180,17 @@ public struct ImageViewer: View {
 
     // MARK: - Sub-views
 
+    private var videoPlayIcon: some View {
+        Image(systemName: "play.circle.fill")
+            .font(.system(size: 72))
+            .foregroundStyle(.white.opacity(0.85))
+            .shadow(radius: 8)
+    }
+
     @ViewBuilder
     private func videoView(for attachment: ImageAttachment) -> some View {
+        let mediaURL = attachment.imageURL(boardID: boardID)
+
         ZStack {
             if let thumb = thumbnailImage {
                 thumb
@@ -188,17 +198,22 @@ public struct ImageViewer: View {
                     .scaledToFit()
             }
             VStack(spacing: 16) {
-                Image(systemName: "play.circle.fill")
-                    .font(.system(size: 72))
-                    .foregroundStyle(.white.opacity(0.85))
-                    .shadow(radius: 8)
-                if let url = attachment.imageURL(boardID: boardID) {
-                    Link("Open in Browser", destination: url)
+                if let mediaURL {
+                    Button {
+                        openURL(mediaURL)
+                    } label: {
+                        videoPlayIcon
+                    }
+                    .buttonStyle(.plain)
+
+                    Link("Open in Browser", destination: mediaURL)
                         .font(.caption.weight(.semibold))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 7)
                         .background(.ultraThinMaterial, in: Capsule())
                         .foregroundStyle(.white)
+                } else {
+                    videoPlayIcon
                 }
             }
         }
@@ -342,4 +357,3 @@ private typealias PlatformImage = NSImage
 }
 
 #endif
-
