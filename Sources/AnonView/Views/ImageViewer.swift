@@ -26,7 +26,7 @@ private enum MediaKind {
     }
 
     private static let webImageExtensions: Set<String> = ["gif", "webp"]
-    private static let videoExtensions: Set<String> = ["mp4", "m4v", "mov", "webm", "ogg", "ogv"]
+    private static let videoExtensions: Set<String> = ["mp4", "m4v", "mov", "webm"]
 }
 
 public struct ImageViewer: View {
@@ -230,18 +230,19 @@ private struct WebMediaView: View {
 
     private var html: String {
         let source = url.absoluteString.htmlEscaped
-        let fileName = (url.lastPathComponent.isEmpty ? "media" : url.lastPathComponent).htmlEscaped
+        let baseName = url.deletingPathExtension().lastPathComponent
+        let accessibleName = (baseName.isEmpty ? "media" : baseName).htmlEscaped
         let content: String
         switch mediaKind {
         case .video:
             content = """
-            <video controls loop playsinline aria-label="Video attachment \(fileName)">
+            <video controls loop playsinline aria-label="Video attachment \(accessibleName)">
               <source src="\(source)">
               Your browser cannot play this video.
             </video>
             """
         case .webImage, .staticImage:
-            content = "<img src=\"\(source)\" alt=\"\(mediaDescription)\" />"
+            content = "<img src=\"\(source)\" alt=\"Image attachment \(accessibleName)\" />"
         }
 
         return """
