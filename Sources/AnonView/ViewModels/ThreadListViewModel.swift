@@ -25,7 +25,7 @@ public final class ThreadListViewModel: ObservableObject {
             thread.subject?.localizedCaseInsensitiveContains(trimmedQuery) == true ||
             thread.comment?.lightlyParsedHTML.localizedCaseInsensitiveContains(trimmedQuery) == true ||
             thread.author?.localizedCaseInsensitiveContains(trimmedQuery) == true ||
-            String(thread.id).contains(trimmedQuery)
+            String(thread.id).localizedCaseInsensitiveContains(trimmedQuery)
         }
     }
 
