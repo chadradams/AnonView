@@ -15,8 +15,8 @@ public struct ThreadDetailView: View {
             set: { if !$0 { selectedImageIndex = nil } }
         )
     }
-    private var imageURLs: [URL] {
-        viewModel.posts.compactMap { $0.attachment?.imageURL(boardID: board.id) }
+    private var attachments: [ImageAttachment] {
+        viewModel.posts.compactMap { $0.attachment }
     }
 
     public init(board: Board, threadID: Int) {
@@ -60,8 +60,7 @@ public struct ThreadDetailView: View {
                             }
 
                             if let attachment = post.attachment,
-                               let thumbURL = attachment.thumbnailURL(boardID: board.id),
-                               let fullURL = attachment.imageURL(boardID: board.id) {
+                               let thumbURL = attachment.thumbnailURL(boardID: board.id) {
                                 let shouldBlur = nsfwFilter.blurNSFWImages &&
                                     nsfwFilter.isNSFW(boardID: board.id, boardIsWorksafe: board.isWorksafe, spoiler: post.spoiler, subject: post.subject)
 
@@ -79,7 +78,7 @@ public struct ThreadDetailView: View {
                                         }
                                     }
                                     .onTapGesture {
-                                        selectedImageIndex = imageURLs.firstIndex(of: fullURL)
+                                        selectedImageIndex = attachments.firstIndex(of: attachment)
                                     }
                             }
 
@@ -119,13 +118,13 @@ public struct ThreadDetailView: View {
 #if os(macOS)
         .sheet(isPresented: isImageViewerPresented) {
             if let selectedImageIndex {
-                ImageViewer(imageURLs: imageURLs, initialIndex: selectedImageIndex)
+                ImageViewer(attachments: attachments, boardID: board.id, initialIndex: selectedImageIndex)
             }
         }
 #else
         .fullScreenCover(isPresented: isImageViewerPresented) {
             if let selectedImageIndex {
-                ImageViewer(imageURLs: imageURLs, initialIndex: selectedImageIndex)
+                ImageViewer(attachments: attachments, boardID: board.id, initialIndex: selectedImageIndex)
             }
         }
 #endif
