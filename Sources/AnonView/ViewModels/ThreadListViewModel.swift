@@ -17,6 +17,22 @@ public final class ThreadListViewModel: ObservableObject {
         self.cacheManager = cacheManager
     }
 
+    public func filteredThreads(matching query: String) -> [ThreadSummary] {
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedQuery.isEmpty else { return threads }
+        let isNumericQuery = trimmedQuery.allSatisfy(\.isNumber)
+
+        return threads.filter { thread in
+            if isNumericQuery, String(thread.id).contains(trimmedQuery) {
+                return true
+            }
+
+            return thread.subject?.localizedCaseInsensitiveContains(trimmedQuery) == true ||
+                thread.comment?.lightlyParsedHTML.localizedCaseInsensitiveContains(trimmedQuery) == true ||
+                thread.author?.localizedCaseInsensitiveContains(trimmedQuery) == true
+        }
+    }
+
     public func loadThreads(forceRefresh: Bool = false) async {
         AppLogger.info("Loading threads for /\(board.id)/ (forceRefresh: \(forceRefresh))")
         isLoading = true
