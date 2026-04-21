@@ -237,6 +237,7 @@ private struct WebMediaView: View {
             content = """
             <video controls loop playsinline aria-label="\(mediaDescription)">
               <source src="\(source)">
+              Your browser cannot play this video.
             </video>
             """
         case .webImage, .staticImage:
@@ -247,7 +248,7 @@ private struct WebMediaView: View {
         <!doctype html>
         <html>
         <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
             html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: black; overflow: hidden; }
             body { display: flex; align-items: center; justify-content: center; }
