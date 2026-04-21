@@ -21,6 +21,7 @@ public struct AnonViewApp: App {
         #if os(macOS)
         Settings {
             NavigationStack { SettingsView() }
+                .frame(minWidth: 520, minHeight: 360)
         }
         #endif
     }
