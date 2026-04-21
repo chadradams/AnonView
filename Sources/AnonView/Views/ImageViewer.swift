@@ -231,12 +231,11 @@ private struct WebMediaView: View {
     private var html: String {
         let source = url.absoluteString.htmlEscaped
         let fileName = (url.lastPathComponent.isEmpty ? "media" : url.lastPathComponent).htmlEscaped
-        let mediaDescription = "Video attachment \(fileName)"
         let content: String
         switch mediaKind {
         case .video:
             content = """
-            <video controls loop playsinline aria-label="\(mediaDescription)">
+            <video controls loop playsinline aria-label="Video attachment \(fileName)">
               <source src="\(source)">
               Your browser cannot play this video.
             </video>
@@ -335,7 +334,7 @@ private struct WebMediaView: View {
 private extension String {
     var htmlEscaped: String {
         var escaped = ""
-        escaped.reserveCapacity(count * 2)
+        escaped.reserveCapacity(count + (count / 4))
 
         for character in self {
             switch character {
