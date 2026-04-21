@@ -21,18 +21,11 @@ public final class ThreadListViewModel: ObservableObject {
         let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuery.isEmpty else { return threads }
 
-        let normalizedQuery = trimmedQuery.lowercased()
         return threads.filter { thread in
-            let searchableContent = [
-                thread.subject,
-                thread.comment?.lightlyParsedHTML,
-                thread.author,
-                String(thread.id),
-            ]
-                .compactMap { $0?.lowercased() }
-                .joined(separator: " ")
-
-            return searchableContent.contains(normalizedQuery)
+            thread.subject?.localizedCaseInsensitiveContains(trimmedQuery) == true ||
+            thread.comment?.lightlyParsedHTML.localizedCaseInsensitiveContains(trimmedQuery) == true ||
+            thread.author?.localizedCaseInsensitiveContains(trimmedQuery) == true ||
+            String(thread.id).contains(trimmedQuery)
         }
     }
 
