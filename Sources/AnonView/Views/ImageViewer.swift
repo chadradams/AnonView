@@ -242,11 +242,12 @@ private struct WebMediaView: View {
         let source = url.absoluteString.htmlEscaped
         let baseName = url.deletingPathExtension().lastPathComponent
         let accessibleName = (baseName.isEmpty ? "media" : baseName).htmlEscaped
+        let allowedMediaSources = url.host.map { "https://\($0) http://\($0)" } ?? "https: http:"
         let content: String
         switch mediaKind {
         case .video:
             content = """
-            <video controls loop playsinline aria-label="Video attachment \(accessibleName)">
+            <video controls loop playsinline>
               <source src="\(source)">
               Your browser cannot play this video.
             </video>
@@ -260,7 +261,7 @@ private struct WebMediaView: View {
         <html>
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src http: https: data:; media-src http: https:; style-src 'unsafe-inline';">
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src \(allowedMediaSources.htmlEscaped) data:; media-src \(allowedMediaSources.htmlEscaped); style-src 'unsafe-inline';">
           <style>
             html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: black; overflow: hidden; }
             body { display: flex; align-items: center; justify-content: center; }
@@ -384,7 +385,22 @@ private struct WebMediaView: View {
 private extension String {
     var htmlEscaped: String {
         var escaped = ""
-        escaped.reserveCapacity(count * 6)
+        var extraCapacity = 0
+        for character in self {
+            switch character {
+            case "&":
+                extraCapacity += 4
+            case "\"":
+                extraCapacity += 5
+            case "'":
+                extraCapacity += 4
+            case "<", ">":
+                extraCapacity += 3
+            default:
+                break
+            }
+        }
+        escaped.reserveCapacity(count + extraCapacity)
 
         for character in self {
             switch character {
