@@ -11,12 +11,14 @@ public final class ThreadViewModel: ObservableObject {
     private let threadID: Int
     private let apiClient: APIClient
     private let cacheManager: CacheManager
+    private let imageLoader: ImageLoader
 
     public init(boardID: String, threadID: Int, apiClient: APIClient = APIClient(), cacheManager: CacheManager = .shared) {
         self.boardID = boardID
         self.threadID = threadID
         self.apiClient = apiClient
         self.cacheManager = cacheManager
+        self.imageLoader = ImageLoader(cacheManager: cacheManager)
     }
 
     public func loadPosts(forceRefresh: Bool = false) async {
@@ -38,6 +40,8 @@ public final class ThreadViewModel: ObservableObject {
             posts = remotePosts
             cacheManager.cache(data: try JSONEncoder().encode(remotePosts), forKey: cacheKey)
             AppLogger.info("Loaded posts from network for /\(boardID)/ thread \(threadID): \(remotePosts.count)")
+            let thumbURLs = remotePosts.compactMap { $0.attachment?.thumbnailURL(boardID: boardID) }
+            imageLoader.prefetch(urls: thumbURLs)
             errorMessage = nil
         } catch {
             AppLogger.error("Failed to load posts for /\(boardID)/ thread \(threadID): \(error.localizedDescription)")

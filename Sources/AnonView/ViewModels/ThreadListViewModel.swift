@@ -10,11 +10,13 @@ public final class ThreadListViewModel: ObservableObject {
     private let board: Board
     private let apiClient: APIClient
     private let cacheManager: CacheManager
+    private let imageLoader: ImageLoader
 
     public init(board: Board, apiClient: APIClient = APIClient(), cacheManager: CacheManager = .shared) {
         self.board = board
         self.apiClient = apiClient
         self.cacheManager = cacheManager
+        self.imageLoader = ImageLoader(cacheManager: cacheManager)
     }
 
     public func filteredThreads(matching query: String) -> [ThreadSummary] {
@@ -52,6 +54,8 @@ public final class ThreadListViewModel: ObservableObject {
             threads = remoteThreads
             cacheManager.cache(data: try JSONEncoder().encode(remoteThreads), forKey: cacheKey)
             AppLogger.info("Loaded catalog from network for /\(board.id)/: \(remoteThreads.count) threads")
+            let thumbURLs = remoteThreads.compactMap { $0.attachment?.thumbnailURL(boardID: board.id) }
+            imageLoader.prefetch(urls: thumbURLs)
             errorMessage = nil
         } catch {
             AppLogger.error("Failed to load catalog for /\(board.id)/: \(error.localizedDescription)")

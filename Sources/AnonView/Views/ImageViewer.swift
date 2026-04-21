@@ -134,6 +134,13 @@ public struct ImageViewer: View {
                 image = nil
                 loadFailed = true
             }
+
+            // Prefetch the next two and previous one images so navigation feels instant.
+            let adjacent = [-1, 1, 2].compactMap { offset -> URL? in
+                let idx = currentIndex + offset
+                return imageURLs.indices.contains(idx) ? imageURLs[idx] : nil
+            }
+            imageLoader.prefetch(urls: adjacent)
         }
     }
 
