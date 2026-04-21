@@ -17,6 +17,25 @@ public final class ThreadListViewModel: ObservableObject {
         self.cacheManager = cacheManager
     }
 
+    public func filteredThreads(matching query: String) -> [ThreadSummary] {
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedQuery.isEmpty else { return threads }
+
+        let normalizedQuery = trimmedQuery.lowercased()
+        return threads.filter { thread in
+            let searchableContent = [
+                thread.subject,
+                thread.comment?.lightlyParsedHTML,
+                thread.author,
+                String(thread.id),
+            ]
+                .compactMap { $0?.lowercased() }
+                .joined(separator: " ")
+
+            return searchableContent.contains(normalizedQuery)
+        }
+    }
+
     public func loadThreads(forceRefresh: Bool = false) async {
         AppLogger.info("Loading threads for /\(board.id)/ (forceRefresh: \(forceRefresh))")
         isLoading = true

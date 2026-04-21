@@ -5,6 +5,7 @@ public struct ThreadListView: View {
     private let board: Board
     private let selection: Binding<ThreadSummary?>?
     @StateObject private var viewModel: ThreadListViewModel
+    @State private var searchText = ""
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 2)
 
     public init(board: Board, selection: Binding<ThreadSummary?>? = nil) {
@@ -16,7 +17,7 @@ public struct ThreadListView: View {
     public var body: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 12) {
-                ForEach(viewModel.threads) { thread in
+                ForEach(viewModel.filteredThreads(matching: searchText)) { thread in
                     if let selection {
                         Button {
                             selection.wrappedValue = thread
@@ -35,6 +36,7 @@ public struct ThreadListView: View {
             .padding(12)
         }
         .navigationTitle("/\(board.id)/")
+        .searchable(text: $searchText, prompt: "Search threads")
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
