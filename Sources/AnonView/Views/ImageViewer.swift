@@ -230,16 +230,17 @@ private struct WebMediaView: View {
 
     private var html: String {
         let source = url.absoluteString.htmlEscaped
+        let mediaDescription = (url.lastPathComponent.isEmpty ? "media" : url.lastPathComponent).htmlEscaped
         let content: String
         switch mediaKind {
         case .video:
             content = """
-            <video controls autoplay loop playsinline>
+            <video controls autoplay loop playsinline aria-label="\(mediaDescription)" title="\(mediaDescription)">
               <source src="\(source)">
             </video>
             """
         case .webImage, .staticImage:
-            content = "<img src=\"\(source)\" alt=\"Media\" />"
+            content = "<img src=\"\(source)\" alt=\"\(mediaDescription)\" />"
         }
 
         return """
@@ -265,6 +266,10 @@ private struct WebMediaView: View {
 private struct PlatformWebView: UIViewRepresentable {
     let html: String
 
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.isOpaque = false
@@ -272,26 +277,44 @@ private struct PlatformWebView: UIViewRepresentable {
         webView.scrollView.backgroundColor = .black
         webView.scrollView.isScrollEnabled = false
         webView.loadHTMLString(html, baseURL: nil)
+        context.coordinator.lastHTML = html
         return webView
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
+        guard context.coordinator.lastHTML != html else { return }
         webView.loadHTMLString(html, baseURL: nil)
+        context.coordinator.lastHTML = html
+    }
+
+    final class Coordinator {
+        var lastHTML: String?
     }
 }
 #elseif canImport(AppKit)
 private struct PlatformWebView: NSViewRepresentable {
     let html: String
 
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
     func makeNSView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.setValue(false, forKey: "drawsBackground")
         webView.loadHTMLString(html, baseURL: nil)
+        context.coordinator.lastHTML = html
         return webView
     }
 
     func updateNSView(_ webView: WKWebView, context: Context) {
+        guard context.coordinator.lastHTML != html else { return }
         webView.loadHTMLString(html, baseURL: nil)
+        context.coordinator.lastHTML = html
+    }
+
+    final class Coordinator {
+        var lastHTML: String?
     }
 }
 #endif
