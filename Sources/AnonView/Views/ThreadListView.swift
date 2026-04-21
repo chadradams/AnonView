@@ -98,11 +98,11 @@ public struct ThreadListView: View {
         .padding(10)
         .background(
             RoundedRectangle(cornerRadius: 14)
-                .fill(isSelected ? .accent.opacity(0.14) : .secondary.opacity(0.08))
+                .fill(isSelected ? Color.accentColor.opacity(0.14) : .secondary.opacity(0.08))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .stroke(isSelected ? .accent : .clear, lineWidth: 1.2)
+                .stroke(isSelected ? Color.accentColor : .clear, lineWidth: 1.2)
         )
     }
 }
