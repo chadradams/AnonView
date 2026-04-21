@@ -20,12 +20,16 @@ public final class ThreadListViewModel: ObservableObject {
     public func filteredThreads(matching query: String) -> [ThreadSummary] {
         let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedQuery.isEmpty else { return threads }
+        let numericQuery = Int(trimmedQuery)
 
         return threads.filter { thread in
+            if let numericQuery, thread.id == numericQuery {
+                return true
+            }
+
             thread.subject?.localizedCaseInsensitiveContains(trimmedQuery) == true ||
             thread.comment?.lightlyParsedHTML.localizedCaseInsensitiveContains(trimmedQuery) == true ||
-            thread.author?.localizedCaseInsensitiveContains(trimmedQuery) == true ||
-            String(thread.id).localizedCaseInsensitiveContains(trimmedQuery)
+            thread.author?.localizedCaseInsensitiveContains(trimmedQuery) == true
         }
     }
 
