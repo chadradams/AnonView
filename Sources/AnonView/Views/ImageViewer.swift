@@ -235,7 +235,7 @@ private struct WebMediaView: View {
         switch mediaKind {
         case .video:
             content = """
-            <video controls autoplay loop playsinline aria-label="\(mediaDescription)" title="\(mediaDescription)">
+            <video controls loop playsinline aria-label="\(mediaDescription)">
               <source src="\(source)">
             </video>
             """
@@ -332,11 +332,27 @@ private struct WebMediaView: View {
 
 private extension String {
     var htmlEscaped: String {
-        replacingOccurrences(of: "&", with: "&amp;")
-            .replacingOccurrences(of: "\"", with: "&quot;")
-            .replacingOccurrences(of: "'", with: "&#39;")
-            .replacingOccurrences(of: "<", with: "&lt;")
-            .replacingOccurrences(of: ">", with: "&gt;")
+        var escaped = ""
+        escaped.reserveCapacity(count)
+
+        for character in self {
+            switch character {
+            case "&":
+                escaped += "&amp;"
+            case "\"":
+                escaped += "&quot;"
+            case "'":
+                escaped += "&#39;"
+            case "<":
+                escaped += "&lt;"
+            case ">":
+                escaped += "&gt;"
+            default:
+                escaped.append(character)
+            }
+        }
+
+        return escaped
     }
 }
 
