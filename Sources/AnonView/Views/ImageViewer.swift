@@ -183,6 +183,10 @@ public struct ImageViewer: View {
     @ViewBuilder
     private func videoView(for attachment: ImageAttachment) -> some View {
         let mediaURL = attachment.imageURL(boardID: boardID)
+        let playIcon = Image(systemName: "play.circle.fill")
+            .font(.system(size: 72))
+            .foregroundStyle(.white.opacity(0.85))
+            .shadow(radius: 8)
 
         ZStack {
             if let thumb = thumbnailImage {
@@ -195,10 +199,7 @@ public struct ImageViewer: View {
                     Button {
                         openURL(mediaURL)
                     } label: {
-                        Image(systemName: "play.circle.fill")
-                            .font(.system(size: 72))
-                            .foregroundStyle(.white.opacity(0.85))
-                            .shadow(radius: 8)
+                        playIcon
                     }
                     .buttonStyle(.plain)
 
@@ -209,10 +210,7 @@ public struct ImageViewer: View {
                         .background(.ultraThinMaterial, in: Capsule())
                         .foregroundStyle(.white)
                 } else {
-                    Image(systemName: "play.circle.fill")
-                        .font(.system(size: 72))
-                        .foregroundStyle(.white.opacity(0.85))
-                        .shadow(radius: 8)
+                    playIcon
                 }
             }
         }
