@@ -230,7 +230,8 @@ private struct WebMediaView: View {
 
     private var html: String {
         let source = url.absoluteString.htmlEscaped
-        let mediaDescription = (url.lastPathComponent.isEmpty ? "media" : url.lastPathComponent).htmlEscaped
+        let fileName = (url.lastPathComponent.isEmpty ? "media" : url.lastPathComponent).htmlEscaped
+        let mediaDescription = "Video attachment \(fileName)"
         let content: String
         switch mediaKind {
         case .video:
@@ -334,7 +335,7 @@ private struct WebMediaView: View {
 private extension String {
     var htmlEscaped: String {
         var escaped = ""
-        escaped.reserveCapacity(count)
+        escaped.reserveCapacity(count * 2)
 
         for character in self {
             switch character {
