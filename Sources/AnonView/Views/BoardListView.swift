@@ -46,4 +46,10 @@ public struct BoardListView: View {
         }
     }
 }
+
+#Preview("Board List") {
+    NavigationStack {
+        BoardListView()
+    }
+}
 #endif

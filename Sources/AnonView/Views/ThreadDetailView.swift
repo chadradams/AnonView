@@ -146,4 +146,13 @@ public struct ThreadDetailView: View {
         return nil
     }
 }
+
+#Preview("Thread Detail") {
+    NavigationStack {
+        ThreadDetailView(
+            board: Board(id: "g", title: "Technology", isWorksafe: true),
+            threadID: 1
+        )
+    }
+}
 #endif

@@ -41,6 +41,12 @@ public struct RemoteImageView: View {
     }
 }
 
+#Preview("Remote Image") {
+    RemoteImageView(url: URL(string: "https://i.4cdn.org/g/1700000000000s.jpg")!)
+        .frame(width: 220, height: 160)
+        .padding()
+}
+
 private extension Data {
     var platformImage: PlatformImage? {
         PlatformImage(data: self)
