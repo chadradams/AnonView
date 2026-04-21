@@ -241,7 +241,10 @@ private struct WebMediaView: View {
     private var html: String {
         let source = url.absoluteString.htmlEscaped
         let baseName = url.deletingPathExtension().lastPathComponent
-        let accessibleName = (baseName.isEmpty ? "media" : baseName).htmlEscaped
+        let readableName = (baseName.removingPercentEncoding ?? baseName)
+            .replacingOccurrences(of: "_", with: " ")
+            .replacingOccurrences(of: "-", with: " ")
+        let accessibleName = (readableName.isEmpty ? "media" : readableName).htmlEscaped
         let content: String
         switch mediaKind {
         case .video:
@@ -275,7 +278,12 @@ private struct WebMediaView: View {
     }
 
     private var cspPolicy: String {
-        let allowedMediaSources = url.host.map { "https://\($0) http://\($0)" } ?? "'none'"
+        let allowedMediaSources: String
+        if let host = url.host, let scheme = url.scheme?.lowercased(), scheme == "https" || scheme == "http" {
+            allowedMediaSources = "\(scheme)://\(host)"
+        } else {
+            allowedMediaSources = "'none'"
+        }
         return "default-src 'none'; img-src \(allowedMediaSources) data:; media-src \(allowedMediaSources); style-src 'unsafe-inline';"
     }
 }
@@ -389,7 +397,7 @@ private struct WebMediaView: View {
 private extension String {
     var htmlEscaped: String {
         var escaped = ""
-        escaped.reserveCapacity(count * 2)
+        escaped.reserveCapacity(count + (count / 4))
 
         for character in self {
             switch character {
