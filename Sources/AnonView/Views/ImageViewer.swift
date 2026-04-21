@@ -225,7 +225,17 @@ private struct WebMediaView: View {
     let mediaKind: MediaKind
 
     var body: some View {
-        PlatformWebView(html: html)
+        if isSupportedScheme {
+            PlatformWebView(html: html, baseURL: url.deletingLastPathComponent())
+        } else {
+            Text("Unsupported media URL")
+                .foregroundStyle(.white)
+        }
+    }
+
+    private var isSupportedScheme: Bool {
+        guard let scheme = url.scheme?.lowercased() else { return false }
+        return scheme == "http" || scheme == "https"
     }
 
     private var html: String {
@@ -250,6 +260,7 @@ private struct WebMediaView: View {
         <html>
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src http: https: data:; media-src http: https:; style-src 'unsafe-inline';">
           <style>
             html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: black; overflow: hidden; }
             body { display: flex; align-items: center; justify-content: center; }
@@ -267,56 +278,94 @@ private struct WebMediaView: View {
 #if canImport(UIKit)
 private struct PlatformWebView: UIViewRepresentable {
     let html: String
+    let baseURL: URL?
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
     }
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        let configuration = WKWebViewConfiguration()
+        let preferences = WKWebpagePreferences()
+        preferences.allowsContentJavaScript = false
+        configuration.defaultWebpagePreferences = preferences
+
+        let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.isOpaque = false
         webView.backgroundColor = .black
         webView.scrollView.backgroundColor = .black
         webView.scrollView.isScrollEnabled = false
-        webView.loadHTMLString(html, baseURL: nil)
+        webView.navigationDelegate = context.coordinator
+        webView.loadHTMLString(html, baseURL: baseURL)
         context.coordinator.lastHTML = html
         return webView
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
         guard context.coordinator.lastHTML != html else { return }
-        webView.loadHTMLString(html, baseURL: nil)
+        webView.loadHTMLString(html, baseURL: baseURL)
         context.coordinator.lastHTML = html
     }
 
-    final class Coordinator {
+    final class Coordinator: NSObject, WKNavigationDelegate {
         var lastHTML: String?
+
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
+            guard let url = navigationAction.request.url else {
+                return .cancel
+            }
+
+            let scheme = url.scheme?.lowercased()
+            if scheme == "about" || scheme == "http" || scheme == "https" {
+                return .allow
+            }
+            return .cancel
+        }
     }
 }
 #elseif canImport(AppKit)
 private struct PlatformWebView: NSViewRepresentable {
     let html: String
+    let baseURL: URL?
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
     }
 
     func makeNSView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        let configuration = WKWebViewConfiguration()
+        let preferences = WKWebpagePreferences()
+        preferences.allowsContentJavaScript = false
+        configuration.defaultWebpagePreferences = preferences
+
+        let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.setValue(false, forKey: "drawsBackground")
-        webView.loadHTMLString(html, baseURL: nil)
+        webView.navigationDelegate = context.coordinator
+        webView.loadHTMLString(html, baseURL: baseURL)
         context.coordinator.lastHTML = html
         return webView
     }
 
     func updateNSView(_ webView: WKWebView, context: Context) {
         guard context.coordinator.lastHTML != html else { return }
-        webView.loadHTMLString(html, baseURL: nil)
+        webView.loadHTMLString(html, baseURL: baseURL)
         context.coordinator.lastHTML = html
     }
 
-    final class Coordinator {
+    final class Coordinator: NSObject, WKNavigationDelegate {
         var lastHTML: String?
+
+        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
+            guard let url = navigationAction.request.url else {
+                return .cancel
+            }
+
+            let scheme = url.scheme?.lowercased()
+            if scheme == "about" || scheme == "http" || scheme == "https" {
+                return .allow
+            }
+            return .cancel
+        }
     }
 }
 #endif
@@ -335,7 +384,7 @@ private struct WebMediaView: View {
 private extension String {
     var htmlEscaped: String {
         var escaped = ""
-        escaped.reserveCapacity(count + (count / 4))
+        escaped.reserveCapacity(count * 6)
 
         for character in self {
             switch character {
