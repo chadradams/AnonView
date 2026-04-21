@@ -156,6 +156,13 @@ public struct ImageViewer: View {
     }
 }
 
+#Preview("Image Viewer") {
+    ImageViewer(
+        imageURLs: [URL(string: "https://i.4cdn.org/g/1700000000000.jpg")!],
+        initialIndex: 0
+    )
+}
+
 private extension Data {
     var platformImage: PlatformImage? {
         PlatformImage(data: self)

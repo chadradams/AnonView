@@ -106,4 +106,10 @@ public struct ThreadListView: View {
         )
     }
 }
+
+#Preview("Thread List") {
+    NavigationStack {
+        ThreadListView(board: Board(id: "g", title: "Technology", isWorksafe: true))
+    }
+}
 #endif

@@ -23,6 +23,7 @@
 		43D79C657999E25570DC3940 /* BoardListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF042BA74E09AFC552D92C4 /* BoardListViewModel.swift */; };
 		58DB02793805BAC4053C3691 /* AnonViewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FD3A9C8BAE95226AAE89B7 /* AnonViewApp.swift */; };
 		5DEE1884166DFEB5C66DED24 /* HTMLSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17E75D254B6B02250938F0B /* HTMLSanitizer.swift */; };
+		5F0B36AA586EB4EF9D6C219A /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7CBFB4D0A785944A5AF969 /* AppLogger.swift */; };
 		5EF5BAB96D6A8E7D0A089DAE /* AnonViewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FD3A9C8BAE95226AAE89B7 /* AnonViewApp.swift */; };
 		60E4BA503D75201C191E1859 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56B6EB73B650714F871F1B5F /* Foundation.framework */; };
 		6420178276FCB54DB4470516 /* NSFWFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A3FF206A455C2A85B6A9DB /* NSFWFilterService.swift */; };
@@ -41,6 +42,7 @@
 		A1C71487A56E58B71A8D64AD /* ThreadListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54F02DB96946FEEF9B205AB /* ThreadListView.swift */; };
 		A807219CD0507763817B6E88 /* ImageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 416E1A8B514004BE252CBC2A /* ImageAttachment.swift */; };
 		B725494E6DA676B952DFDC12 /* HTMLSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B17E75D254B6B02250938F0B /* HTMLSanitizer.swift */; };
+		BD4DA741D9B4DA1D85E70A88 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7CBFB4D0A785944A5AF969 /* AppLogger.swift */; };
 		C4F192BA414B040D8A008FC0 /* ThreadListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C54F02DB96946FEEF9B205AB /* ThreadListView.swift */; };
 		CA6A7055ED814F5557BB8A2D /* AnonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595AE9542311B9232A7A393 /* AnonView.swift */; };
 		CC65FCF131B1CCBE18E66A32 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D470E38F299018455AC1D9AA /* ImageLoader.swift */; };
@@ -67,6 +69,7 @@
 		5FDF1C1DF923A4D2CC79C0C4 /* AnonView iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AnonView iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		60FD3A9C8BAE95226AAE89B7 /* AnonViewApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AnonViewApp.swift; path = Sources/AnonView/App/AnonViewApp.swift; sourceTree = "<group>"; };
 		6BD51198CCCEC71628AA0148 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		6F7CBFB4D0A785944A5AF969 /* AppLogger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppLogger.swift; path = Sources/AnonView/Utilities/AppLogger.swift; sourceTree = "<group>"; };
 		7C1597FEF608136581D0407F /* ImageViewer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImageViewer.swift; path = Sources/AnonView/Views/ImageViewer.swift; sourceTree = "<group>"; };
 		8E1187E4BFC18A7409174A60 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = Sources/AnonView/App/Info.plist; sourceTree = "<group>"; };
 		92A8F527827A0603613ED44A /* Info-macOS.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-macOS.plist"; path = "Sources/AnonView/App/Info-macOS.plist"; sourceTree = "<group>"; };
@@ -125,6 +128,7 @@
 		5CF83F7C80917F9186B5D3C8 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				6F7CBFB4D0A785944A5AF969 /* AppLogger.swift */,
 				B17E75D254B6B02250938F0B /* HTMLSanitizer.swift */,
 			);
 			name = Utilities;
@@ -336,6 +340,7 @@
 				9C2E802ABD9C48F51EBBAF38 /* CacheManager.swift in Sources */,
 				75731F51878EBAB519D1F959 /* ImageLoader.swift in Sources */,
 				124EF8B8CCDF4247C4B4B4DA /* NSFWFilterService.swift in Sources */,
+				5F0B36AA586EB4EF9D6C219A /* AppLogger.swift in Sources */,
 				5DEE1884166DFEB5C66DED24 /* HTMLSanitizer.swift in Sources */,
 				43D79C657999E25570DC3940 /* BoardListViewModel.swift in Sources */,
 				13842A97289051DE590A594C /* ThreadListViewModel.swift in Sources */,
@@ -363,6 +368,7 @@
 				32A13347AB36CAA0B952A43B /* CacheManager.swift in Sources */,
 				CC65FCF131B1CCBE18E66A32 /* ImageLoader.swift in Sources */,
 				6420178276FCB54DB4470516 /* NSFWFilterService.swift in Sources */,
+				BD4DA741D9B4DA1D85E70A88 /* AppLogger.swift in Sources */,
 				B725494E6DA676B952DFDC12 /* HTMLSanitizer.swift in Sources */,
 				D695239CB3FA8887F60B5FE3 /* BoardListViewModel.swift in Sources */,
 				6BF4DEB8E33068DCAFAD09D6 /* ThreadListViewModel.swift in Sources */,
