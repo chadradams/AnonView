@@ -137,7 +137,6 @@ public struct ImageViewer: View {
         }
         .task(id: currentIndex) {
             guard let attachment = currentAttachment else { return }
-            videoPlayer?.pause()
             thumbnailImage = nil
             fullImageData = nil
             videoPlayer = nil

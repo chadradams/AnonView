@@ -61,7 +61,6 @@ public final class CacheManager: @unchecked Sendable {
 
     public func removeExpiredEntries(now: Date = Date()) {
         guard maxCacheAge > 0 else { return }
-        memoryCache.removeAllObjects()
 
         guard let fileURLs = try? fileManager.contentsOfDirectory(
             at: baseDirectoryURL,
