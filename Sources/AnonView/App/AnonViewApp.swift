@@ -3,12 +3,13 @@ import SwiftUI
 
 @main
 public struct AnonViewApp: App {
+    private static let cacheCleanupAfterBackgroundInterval: TimeInterval = 900
+
     @Environment(\.scenePhase) private var scenePhase
     @State private var selectedBoard: Board?
     @State private var selectedThread: ThreadSummary?
     @State private var backgroundedAt: Date?
     private let cacheManager = CacheManager.shared
-    private let backgroundCleanupThreshold: TimeInterval = 15 * 60
 
     public init() {}
 
@@ -30,7 +31,7 @@ public struct AnonViewApp: App {
                     backgroundedAt = Date()
                 case .active:
                     if let backgroundedAt,
-                       Date().timeIntervalSince(backgroundedAt) >= backgroundCleanupThreshold {
+                       Date().timeIntervalSince(backgroundedAt) >= Self.cacheCleanupAfterBackgroundInterval {
                         cacheManager.removeExpiredEntries()
                     }
                     self.backgroundedAt = nil

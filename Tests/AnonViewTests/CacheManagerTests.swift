@@ -2,6 +2,8 @@ import Foundation
 import Testing
 @testable import AnonView
 
+private let staleEntryAgeOffset: TimeInterval = 7_200
+
 @Test func cacheManagerRoundTripsData() throws {
     let directory = URL(fileURLWithPath: NSTemporaryDirectory())
         .appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -32,7 +34,7 @@ import Testing
     #expect(files.count == 1)
     if let fileURL = files.first {
         try FileManager.default.setAttributes(
-            [.modificationDate: Date(timeIntervalSinceNow: -(2 * 60 * 60))],
+            [.modificationDate: Date(timeIntervalSinceNow: -staleEntryAgeOffset)],
             ofItemAtPath: fileURL.path
         )
     }
@@ -58,7 +60,7 @@ import Testing
     #expect(files.count == 1)
     let staleFileURL = files[0]
     try FileManager.default.setAttributes(
-        [.modificationDate: Date(timeIntervalSinceNow: -(2 * 60 * 60))],
+        [.modificationDate: Date(timeIntervalSinceNow: -staleEntryAgeOffset)],
         ofItemAtPath: staleFileURL.path
     )
 
