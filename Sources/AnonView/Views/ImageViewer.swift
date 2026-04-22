@@ -139,8 +139,7 @@ public struct ImageViewer: View {
             guard let attachment = currentAttachment else { return }
             thumbnailImage = nil
             fullImageData = nil
-            videoPlayer?.pause()
-            videoPlayer = nil
+            resetVideoPlayer()
             loadFailed = false
             zoom = 1
 
@@ -185,8 +184,7 @@ public struct ImageViewer: View {
             imageLoader.prefetch(urls: adjacent)
         }
         .onDisappear {
-            videoPlayer?.pause()
-            videoPlayer = nil
+            resetVideoPlayer()
         }
     }
 
@@ -281,6 +279,11 @@ public struct ImageViewer: View {
             return
         }
         videoPlayer = AVPlayer(url: mediaURL)
+    }
+
+    private func resetVideoPlayer() {
+        videoPlayer?.pause()
+        videoPlayer = nil
     }
 }
 

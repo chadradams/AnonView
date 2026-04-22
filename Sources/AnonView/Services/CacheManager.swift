@@ -26,7 +26,6 @@ public final class CacheManager: @unchecked Sendable {
         memoryCache.countLimit = 256
         memoryCache.totalCostLimit = 128 * 1_024 * 1_024
         try? fileManager.createDirectory(at: self.baseDirectoryURL, withIntermediateDirectories: true)
-        removeExpiredEntries()
     }
 
     public func cachedData(forKey key: String) -> Data? {

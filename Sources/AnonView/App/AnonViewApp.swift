@@ -24,8 +24,10 @@ public struct AnonViewApp: App {
                 #endif
             }
             .onAppear {
-                cacheManager.clearMemoryCache()
-                cacheManager.removeExpiredEntries()
+                Task(priority: .utility) {
+                    cacheManager.clearMemoryCache()
+                    cacheManager.removeExpiredEntries()
+                }
             }
             .onChange(of: scenePhase) { _, phase in
                 switch phase {
@@ -34,8 +36,10 @@ public struct AnonViewApp: App {
                 case .active:
                     if let backgroundedAt,
                        Date().timeIntervalSince(backgroundedAt) >= Self.minimumBackgroundDurationForCacheCleanup {
-                        cacheManager.clearMemoryCache()
-                        cacheManager.removeExpiredEntries()
+                        Task(priority: .utility) {
+                            cacheManager.clearMemoryCache()
+                            cacheManager.removeExpiredEntries()
+                        }
                     }
                     self.backgroundedAt = nil
                 default:
