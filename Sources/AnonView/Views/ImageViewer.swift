@@ -184,7 +184,7 @@ public struct ImageViewer: View {
             imageLoader.prefetch(urls: adjacent)
         }
         .onDisappear {
-            videoPlayer?.pause()
+            videoPlayer = nil
         }
     }
 

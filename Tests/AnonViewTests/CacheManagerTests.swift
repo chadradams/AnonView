@@ -3,7 +3,7 @@ import Testing
 @testable import AnonView
 
 private let testMaxCacheAge: TimeInterval = 60
-private let testExpiredAge: TimeInterval = testMaxCacheAge * 120
+private let testExpiredOffset: TimeInterval = testMaxCacheAge * 120
 
 @Test func cacheManagerRoundTripsData() throws {
     let directory = URL(fileURLWithPath: NSTemporaryDirectory())
@@ -35,7 +35,7 @@ private let testExpiredAge: TimeInterval = testMaxCacheAge * 120
     #expect(files.count == 1)
     if let fileURL = files.first {
         try FileManager.default.setAttributes(
-            [.modificationDate: Date(timeIntervalSinceNow: -testExpiredAge)],
+            [.modificationDate: Date(timeIntervalSinceNow: -testExpiredOffset)],
             ofItemAtPath: fileURL.path
         )
     }
@@ -61,7 +61,7 @@ private let testExpiredAge: TimeInterval = testMaxCacheAge * 120
     #expect(files.count == 1)
     let staleFileURL = files[0]
     try FileManager.default.setAttributes(
-        [.modificationDate: Date(timeIntervalSinceNow: -testExpiredAge)],
+        [.modificationDate: Date(timeIntervalSinceNow: -testExpiredOffset)],
         ofItemAtPath: staleFileURL.path
     )
 

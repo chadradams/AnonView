@@ -30,15 +30,14 @@ public final class CacheManager: @unchecked Sendable {
     }
 
     public func cachedData(forKey key: String) -> Data? {
-        let fileURL = pathForKey(key)
-        if isExpired(fileURL: fileURL) {
-            memoryCache.removeObject(forKey: key as NSString)
-            try? fileManager.removeItem(at: fileURL)
-            return nil
-        }
-
         if let inMemory = memoryCache.object(forKey: key as NSString) {
             return inMemory as Data
+        }
+
+        let fileURL = pathForKey(key)
+        if isExpired(fileURL: fileURL) {
+            try? fileManager.removeItem(at: fileURL)
+            return nil
         }
 
         guard let data = try? Data(contentsOf: fileURL) else { return nil }
@@ -71,6 +70,10 @@ public final class CacheManager: @unchecked Sendable {
         for fileURL in fileURLs where isExpired(fileURL: fileURL, now: now) {
             try? fileManager.removeItem(at: fileURL)
         }
+    }
+
+    public func clearMemoryCache() {
+        memoryCache.removeAllObjects()
     }
 
     private func pathForKey(_ key: String) -> URL {
