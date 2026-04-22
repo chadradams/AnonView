@@ -1,6 +1,9 @@
 #if canImport(SwiftUI)
 import SwiftUI
 import ImageIO
+#if canImport(AVKit)
+import AVKit
+#endif
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
@@ -12,11 +15,11 @@ public struct ImageViewer: View {
     let boardID: String
     let initialIndex: Int
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
 
     @State private var zoom: CGFloat = 1
     @State private var thumbnailImage: Image?
     @State private var fullImageData: Data?
+    @State private var videoPlayer: AVPlayer?
     @State private var currentIndex = 0
     @State private var loadFailed = false
 
@@ -134,8 +137,10 @@ public struct ImageViewer: View {
         }
         .task(id: currentIndex) {
             guard let attachment = currentAttachment else { return }
+            videoPlayer?.pause()
             thumbnailImage = nil
             fullImageData = nil
+            videoPlayer = nil
             loadFailed = false
             zoom = 1
 
@@ -146,7 +151,12 @@ public struct ImageViewer: View {
             }
 
             // Videos cannot be decoded as images; the thumbnail + play overlay is enough.
-            guard !attachment.isVideo else { return }
+            if attachment.isVideo {
+                if let mediaURL = attachment.imageURL(boardID: boardID) {
+                    videoPlayer = AVPlayer(url: mediaURL)
+                }
+                return
+            }
 
             guard let fullURL = attachment.imageURL(boardID: boardID) else {
                 loadFailed = true
@@ -176,6 +186,9 @@ public struct ImageViewer: View {
             }
             imageLoader.prefetch(urls: adjacent)
         }
+        .onDisappear {
+            videoPlayer?.pause()
+        }
     }
 
     // MARK: - Sub-views
@@ -189,32 +202,22 @@ public struct ImageViewer: View {
 
     @ViewBuilder
     private func videoView(for attachment: ImageAttachment) -> some View {
-        let mediaURL = attachment.imageURL(boardID: boardID)
-
         ZStack {
-            if let thumb = thumbnailImage {
+            #if canImport(AVKit)
+            if let videoPlayer {
+                VideoPlayer(player: videoPlayer)
+                    .scaledToFit()
+            }
+            #endif
+
+            if videoPlayer == nil, let thumb = thumbnailImage {
                 thumb
                     .resizable()
                     .scaledToFit()
             }
-            VStack(spacing: 16) {
-                if let mediaURL {
-                    Button {
-                        openURL(mediaURL)
-                    } label: {
-                        videoPlayIcon
-                    }
-                    .buttonStyle(.plain)
 
-                    Link("Open in Browser", destination: mediaURL)
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(.ultraThinMaterial, in: Capsule())
-                        .foregroundStyle(.white)
-                } else {
-                    videoPlayIcon
-                }
+            if videoPlayer == nil {
+                videoPlayIcon
             }
         }
     }

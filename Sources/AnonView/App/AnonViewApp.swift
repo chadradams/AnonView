@@ -3,8 +3,12 @@ import SwiftUI
 
 @main
 public struct AnonViewApp: App {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var selectedBoard: Board?
     @State private var selectedThread: ThreadSummary?
+    @State private var backgroundedAt: Date?
+    private let cacheManager = CacheManager.shared
+    private let backgroundCleanupThreshold: TimeInterval = 15 * 60
 
     public init() {}
 
@@ -16,6 +20,23 @@ public struct AnonViewApp: App {
                 #else
                 SplitRootView(selectedBoard: $selectedBoard, selectedThread: $selectedThread)
                 #endif
+            }
+            .onAppear {
+                cacheManager.removeExpiredEntries()
+            }
+            .onChange(of: scenePhase) { _, phase in
+                switch phase {
+                case .background:
+                    backgroundedAt = Date()
+                case .active:
+                    if let backgroundedAt,
+                       Date().timeIntervalSince(backgroundedAt) >= backgroundCleanupThreshold {
+                        cacheManager.removeExpiredEntries()
+                    }
+                    self.backgroundedAt = nil
+                default:
+                    break
+                }
             }
         }
         #if os(macOS)
