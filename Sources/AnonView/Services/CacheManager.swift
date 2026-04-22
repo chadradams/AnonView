@@ -2,13 +2,20 @@ import Foundation
 
 public final class CacheManager: @unchecked Sendable {
     public static let shared = CacheManager()
+    public static let defaultMaxCacheAge: TimeInterval = 24 * 60 * 60
 
     private let memoryCache = NSCache<NSString, NSData>()
     private let fileManager: FileManager
     private let baseDirectoryURL: URL
+    private let maxCacheAge: TimeInterval
 
-    public init(fileManager: FileManager = .default, baseDirectoryURL: URL? = nil) {
+    public init(
+        fileManager: FileManager = .default,
+        baseDirectoryURL: URL? = nil,
+        maxCacheAge: TimeInterval = CacheManager.defaultMaxCacheAge
+    ) {
         self.fileManager = fileManager
+        self.maxCacheAge = maxCacheAge
         if let baseDirectoryURL {
             self.baseDirectoryURL = baseDirectoryURL
         } else {
@@ -27,6 +34,11 @@ public final class CacheManager: @unchecked Sendable {
         }
 
         let fileURL = pathForKey(key)
+        if isExpired(fileURL: fileURL) {
+            try? fileManager.removeItem(at: fileURL)
+            return nil
+        }
+
         guard let data = try? Data(contentsOf: fileURL) else { return nil }
         memoryCache.setObject(data as NSData, forKey: key as NSString, cost: data.count)
         return data
@@ -45,10 +57,37 @@ public final class CacheManager: @unchecked Sendable {
         try fileManager.createDirectory(at: baseDirectoryURL, withIntermediateDirectories: true)
     }
 
+    public func removeExpiredEntries(now: Date = Date()) {
+        guard maxCacheAge > 0 else { return }
+
+        guard let fileURLs = try? fileManager.contentsOfDirectory(
+            at: baseDirectoryURL,
+            includingPropertiesForKeys: [.contentModificationDateKey],
+            options: [.skipsHiddenFiles]
+        ) else { return }
+
+        for fileURL in fileURLs where isExpired(fileURL: fileURL, now: now) {
+            try? fileManager.removeItem(at: fileURL)
+        }
+    }
+
+    public func clearMemoryCache() {
+        memoryCache.removeAllObjects()
+    }
+
     private func pathForKey(_ key: String) -> URL {
         let safeName = Data(key.utf8).base64EncodedString()
             .replacingOccurrences(of: "/", with: "_")
             .replacingOccurrences(of: "+", with: "-")
         return baseDirectoryURL.appendingPathComponent(safeName)
+    }
+
+    private func isExpired(fileURL: URL, now: Date = Date()) -> Bool {
+        guard maxCacheAge > 0 else { return false }
+        guard let values = try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]),
+              let modificationDate = values.contentModificationDate else {
+            return true
+        }
+        return now.timeIntervalSince(modificationDate) > maxCacheAge
     }
 }

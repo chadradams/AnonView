@@ -1,6 +1,9 @@
 #if canImport(SwiftUI)
 import SwiftUI
 import ImageIO
+#if canImport(AVKit)
+import AVKit
+#endif
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
@@ -12,11 +15,11 @@ public struct ImageViewer: View {
     let boardID: String
     let initialIndex: Int
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
 
     @State private var zoom: CGFloat = 1
     @State private var thumbnailImage: Image?
     @State private var fullImageData: Data?
+    @State private var videoPlayer: AVPlayer?
     @State private var currentIndex = 0
     @State private var loadFailed = false
 
@@ -39,7 +42,7 @@ public struct ImageViewer: View {
                     .foregroundStyle(.white)
             } else if let attachment = currentAttachment {
                 if attachment.isVideo {
-                    videoView(for: attachment)
+                    videoView()
                 } else if let data = fullImageData {
                     fullMediaView(data: data, mediaType: attachment.mediaType)
                 } else if let thumb = thumbnailImage {
@@ -136,6 +139,7 @@ public struct ImageViewer: View {
             guard let attachment = currentAttachment else { return }
             thumbnailImage = nil
             fullImageData = nil
+            resetVideoPlayer()
             loadFailed = false
             zoom = 1
 
@@ -146,7 +150,10 @@ public struct ImageViewer: View {
             }
 
             // Videos cannot be decoded as images; the thumbnail + play overlay is enough.
-            guard !attachment.isVideo else { return }
+            if attachment.isVideo {
+                configureVideoPlayer(for: attachment)
+                return
+            }
 
             guard let fullURL = attachment.imageURL(boardID: boardID) else {
                 loadFailed = true
@@ -176,6 +183,9 @@ public struct ImageViewer: View {
             }
             imageLoader.prefetch(urls: adjacent)
         }
+        .onDisappear {
+            resetVideoPlayer()
+        }
     }
 
     // MARK: - Sub-views
@@ -188,34 +198,28 @@ public struct ImageViewer: View {
     }
 
     @ViewBuilder
-    private func videoView(for attachment: ImageAttachment) -> some View {
-        let mediaURL = attachment.imageURL(boardID: boardID)
-
+    private func videoView() -> some View {
         ZStack {
+            #if canImport(AVKit)
+            if let videoPlayer {
+                VideoPlayer(player: videoPlayer)
+                    .scaledToFit()
+            } else if let thumb = thumbnailImage {
+                thumb
+                    .resizable()
+                    .scaledToFit()
+                videoPlayIcon
+            } else {
+                videoPlayIcon
+            }
+            #else
             if let thumb = thumbnailImage {
                 thumb
                     .resizable()
                     .scaledToFit()
             }
-            VStack(spacing: 16) {
-                if let mediaURL {
-                    Button {
-                        openURL(mediaURL)
-                    } label: {
-                        videoPlayIcon
-                    }
-                    .buttonStyle(.plain)
-
-                    Link("Open in Browser", destination: mediaURL)
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(.ultraThinMaterial, in: Capsule())
-                        .foregroundStyle(.white)
-                } else {
-                    videoPlayIcon
-                }
-            }
+            videoPlayIcon
+            #endif
         }
     }
 
@@ -267,6 +271,19 @@ public struct ImageViewer: View {
     private func moveToPreviousImage() {
         guard canMovePrevious else { return }
         currentIndex -= 1
+    }
+
+    private func configureVideoPlayer(for attachment: ImageAttachment) {
+        guard let mediaURL = attachment.imageURL(boardID: boardID) else {
+            videoPlayer = nil
+            return
+        }
+        videoPlayer = AVPlayer(url: mediaURL)
+    }
+
+    private func resetVideoPlayer() {
+        videoPlayer?.pause()
+        videoPlayer = nil
     }
 }
 
