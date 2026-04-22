@@ -86,7 +86,7 @@ public final class CacheManager: @unchecked Sendable {
         guard maxCacheAge > 0 else { return false }
         guard let values = try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]),
               let modificationDate = values.contentModificationDate else {
-            return false
+            return true
         }
         return now.timeIntervalSince(modificationDate) > maxCacheAge
     }
