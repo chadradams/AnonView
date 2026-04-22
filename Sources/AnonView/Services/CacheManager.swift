@@ -2,7 +2,7 @@ import Foundation
 
 public final class CacheManager: @unchecked Sendable {
     public static let shared = CacheManager()
-    public static let defaultMaxCacheAge: TimeInterval = 86_400
+    public static let defaultMaxCacheAge: TimeInterval = 24 * 60 * 60
 
     private let memoryCache = NSCache<NSString, NSData>()
     private let fileManager: FileManager

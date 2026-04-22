@@ -3,7 +3,8 @@ import Testing
 @testable import AnonView
 
 private let testMaxCacheAge: TimeInterval = 60
-private let testExpiredOffset: TimeInterval = testMaxCacheAge * 120
+private let testExpirationMultiplier: TimeInterval = 120
+private let testExpiredOffset: TimeInterval = testMaxCacheAge * testExpirationMultiplier
 
 @Test func cacheManagerRoundTripsData() throws {
     let directory = URL(fileURLWithPath: NSTemporaryDirectory())

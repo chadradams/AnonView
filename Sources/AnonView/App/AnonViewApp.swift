@@ -4,7 +4,7 @@ import SwiftUI
 @main
 public struct AnonViewApp: App {
     // Run cleanup only after meaningful inactivity to avoid unnecessary churn.
-    private static let minimumBackgroundDurationForCacheCleanup: TimeInterval = 900 // 15 minutes
+    private static let minimumBackgroundDurationForCacheCleanup: TimeInterval = 15 * 60
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var selectedBoard: Board?
