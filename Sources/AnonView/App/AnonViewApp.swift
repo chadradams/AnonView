@@ -3,7 +3,8 @@ import SwiftUI
 
 @main
 public struct AnonViewApp: App {
-    private static let cacheCleanupAfterBackgroundInterval: TimeInterval = 900
+    // Run cleanup only after meaningful inactivity to avoid unnecessary churn.
+    private static let minimumBackgroundDurationForCacheCleanup: TimeInterval = 900
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var selectedBoard: Board?
@@ -31,7 +32,7 @@ public struct AnonViewApp: App {
                     backgroundedAt = Date()
                 case .active:
                     if let backgroundedAt,
-                       Date().timeIntervalSince(backgroundedAt) >= Self.cacheCleanupAfterBackgroundInterval {
+                       Date().timeIntervalSince(backgroundedAt) >= Self.minimumBackgroundDurationForCacheCleanup {
                         cacheManager.removeExpiredEntries()
                     }
                     self.backgroundedAt = nil

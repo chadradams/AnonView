@@ -204,18 +204,22 @@ public struct ImageViewer: View {
             if let videoPlayer {
                 VideoPlayer(player: videoPlayer)
                     .scaledToFit()
+            } else if let thumb = thumbnailImage {
+                thumb
+                    .resizable()
+                    .scaledToFit()
+                videoPlayIcon
+            } else {
+                videoPlayIcon
             }
-            #endif
-
-            if videoPlayer == nil, let thumb = thumbnailImage {
+            #else
+            if let thumb = thumbnailImage {
                 thumb
                     .resizable()
                     .scaledToFit()
             }
-
-            if videoPlayer == nil {
-                videoPlayIcon
-            }
+            videoPlayIcon
+            #endif
         }
     }
 
