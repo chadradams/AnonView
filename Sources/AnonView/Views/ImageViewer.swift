@@ -42,7 +42,7 @@ public struct ImageViewer: View {
                     .foregroundStyle(.white)
             } else if let attachment = currentAttachment {
                 if attachment.isVideo {
-                    videoView(for: attachment)
+                    videoView()
                 } else if let data = fullImageData {
                     fullMediaView(data: data, mediaType: attachment.mediaType)
                 } else if let thumb = thumbnailImage {
@@ -151,9 +151,7 @@ public struct ImageViewer: View {
 
             // Videos cannot be decoded as images; the thumbnail + play overlay is enough.
             if attachment.isVideo {
-                if let mediaURL = attachment.imageURL(boardID: boardID) {
-                    videoPlayer = AVPlayer(url: mediaURL)
-                }
+                configureVideoPlayer(for: attachment)
                 return
             }
 
@@ -200,7 +198,7 @@ public struct ImageViewer: View {
     }
 
     @ViewBuilder
-    private func videoView(for attachment: ImageAttachment) -> some View {
+    private func videoView() -> some View {
         ZStack {
             #if canImport(AVKit)
             if let videoPlayer {
@@ -269,6 +267,14 @@ public struct ImageViewer: View {
     private func moveToPreviousImage() {
         guard canMovePrevious else { return }
         currentIndex -= 1
+    }
+
+    private func configureVideoPlayer(for attachment: ImageAttachment) {
+        guard let mediaURL = attachment.imageURL(boardID: boardID) else {
+            videoPlayer = nil
+            return
+        }
+        videoPlayer = AVPlayer(url: mediaURL)
     }
 }
 

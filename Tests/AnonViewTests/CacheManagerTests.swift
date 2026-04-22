@@ -2,7 +2,8 @@ import Foundation
 import Testing
 @testable import AnonView
 
-private let staleEntryAgeOffset: TimeInterval = 7_200
+private let testMaxCacheAge: TimeInterval = 60
+private let testStaleAgeSeconds: TimeInterval = testMaxCacheAge * 120
 
 @Test func cacheManagerRoundTripsData() throws {
     let directory = URL(fileURLWithPath: NSTemporaryDirectory())
@@ -21,7 +22,7 @@ private let staleEntryAgeOffset: TimeInterval = 7_200
 @Test func cacheManagerExpiresStaleEntriesOnRead() throws {
     let directory = URL(fileURLWithPath: NSTemporaryDirectory())
         .appendingPathComponent(UUID().uuidString, isDirectory: true)
-    let manager = CacheManager(baseDirectoryURL: directory, maxCacheAge: 60)
+    let manager = CacheManager(baseDirectoryURL: directory, maxCacheAge: testMaxCacheAge)
 
     let payload = Data("stale".utf8)
     manager.cache(data: payload, forKey: "stale-key")
@@ -34,7 +35,7 @@ private let staleEntryAgeOffset: TimeInterval = 7_200
     #expect(files.count == 1)
     if let fileURL = files.first {
         try FileManager.default.setAttributes(
-            [.modificationDate: Date(timeIntervalSinceNow: -staleEntryAgeOffset)],
+            [.modificationDate: Date(timeIntervalSinceNow: -testStaleAgeSeconds)],
             ofItemAtPath: fileURL.path
         )
     }
@@ -46,7 +47,7 @@ private let staleEntryAgeOffset: TimeInterval = 7_200
 @Test func cacheManagerRemovesExpiredEntriesDuringCleanup() throws {
     let directory = URL(fileURLWithPath: NSTemporaryDirectory())
         .appendingPathComponent(UUID().uuidString, isDirectory: true)
-    let manager = CacheManager(baseDirectoryURL: directory, maxCacheAge: 60)
+    let manager = CacheManager(baseDirectoryURL: directory, maxCacheAge: testMaxCacheAge)
 
     let stalePayload = Data("old".utf8)
     let freshPayload = Data("new".utf8)
@@ -60,7 +61,7 @@ private let staleEntryAgeOffset: TimeInterval = 7_200
     #expect(files.count == 1)
     let staleFileURL = files[0]
     try FileManager.default.setAttributes(
-        [.modificationDate: Date(timeIntervalSinceNow: -staleEntryAgeOffset)],
+        [.modificationDate: Date(timeIntervalSinceNow: -testStaleAgeSeconds)],
         ofItemAtPath: staleFileURL.path
     )
 
