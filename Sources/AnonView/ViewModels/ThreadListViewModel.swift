@@ -37,6 +37,7 @@ public final class ThreadListViewModel: ObservableObject {
 
     public func loadThreads(forceRefresh: Bool = false) async {
         AppLogger.info("Loading threads for /\(board.id)/ (forceRefresh: \(forceRefresh))")
+        errorMessage = nil
         isLoading = true
         defer { isLoading = false }
 

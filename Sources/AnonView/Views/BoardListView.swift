@@ -28,7 +28,7 @@ public struct BoardListView: View {
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
-            } else if let errorMessage = viewModel.errorMessage {
+            } else if let errorMessage = viewModel.errorMessage, viewModel.boards.isEmpty {
                 ContentUnavailableView(errorMessage, systemImage: "exclamationmark.triangle")
             }
         }

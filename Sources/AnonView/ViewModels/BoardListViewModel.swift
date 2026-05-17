@@ -17,6 +17,7 @@ public final class BoardListViewModel: ObservableObject {
 
     public func loadBoards(forceRefresh: Bool = false) async {
         AppLogger.info("Loading boards (forceRefresh: \(forceRefresh))")
+        errorMessage = nil
         isLoading = true
         defer { isLoading = false }
 

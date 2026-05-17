@@ -23,6 +23,7 @@ public final class ThreadViewModel: ObservableObject {
 
     public func loadPosts(forceRefresh: Bool = false) async {
         AppLogger.info("Loading posts for /\(boardID)/ thread \(threadID) (forceRefresh: \(forceRefresh))")
+        errorMessage = nil
         isLoading = true
         defer { isLoading = false }
 

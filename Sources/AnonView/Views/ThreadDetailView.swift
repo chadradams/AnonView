@@ -101,7 +101,7 @@ public struct ThreadDetailView: View {
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
-            } else if let errorMessage = viewModel.errorMessage {
+            } else if let errorMessage = viewModel.errorMessage, viewModel.posts.isEmpty {
                 ContentUnavailableView(errorMessage, systemImage: "exclamationmark.triangle")
             }
         }

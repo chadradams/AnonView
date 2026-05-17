@@ -40,7 +40,7 @@ public struct ThreadListView: View {
         .overlay {
             if viewModel.isLoading {
                 ProgressView()
-            } else if let errorMessage = viewModel.errorMessage {
+            } else if let errorMessage = viewModel.errorMessage, viewModel.threads.isEmpty {
                 ContentUnavailableView(errorMessage, systemImage: "exclamationmark.triangle")
             }
         }
