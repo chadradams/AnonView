@@ -29,14 +29,15 @@ public final class CacheManager: @unchecked Sendable {
     }
 
     public func cachedData(forKey key: String) -> Data? {
-        if let inMemory = memoryCache.object(forKey: key as NSString) {
-            return inMemory as Data
-        }
-
         let fileURL = pathForKey(key)
         if isExpired(fileURL: fileURL) {
+            memoryCache.removeObject(forKey: key as NSString)
             try? fileManager.removeItem(at: fileURL)
             return nil
+        }
+
+        if let inMemory = memoryCache.object(forKey: key as NSString) {
+            return inMemory as Data
         }
 
         guard let data = try? Data(contentsOf: fileURL) else { return nil }

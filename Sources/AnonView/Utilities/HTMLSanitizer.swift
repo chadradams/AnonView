@@ -10,7 +10,7 @@ private let htmlEntityReplacements: [String: String] = [
     "&nbsp;": " ",
 ]
 
-private let markdownSpecialCharacters = ["\\", "[", "]", "(", ")", "*", "_", "`", "~", ">", "#", "+", "-", "!", "|", "{", "}", "."]
+private let markdownSpecialCharacters = ["\\", "[", "]", "(", ")", "*", "_", "`", "~", "#", "+", "-", "!", "|", "{", "}", "."]
 
 extension String {
     var lightlyParsedHTML: String {
