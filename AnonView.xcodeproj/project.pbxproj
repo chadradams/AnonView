@@ -286,7 +286,7 @@
 				LastUpgradeCheck = 1600;
 			};
 			buildConfigurationList = B794FF717572D96C8EDF711E /* Build configuration list for PBXProject "AnonView" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 16.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
