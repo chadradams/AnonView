@@ -39,6 +39,7 @@ public final class ThreadListViewModel: ObservableObject {
         AppLogger.info("Loading threads for /\(board.id)/ (forceRefresh: \(forceRefresh))")
         isLoading = true
         defer { isLoading = false }
+        errorMessage = nil
 
         let cacheKey = "json:catalog:\(board.id)"
         if !forceRefresh,
@@ -56,7 +57,6 @@ public final class ThreadListViewModel: ObservableObject {
             AppLogger.info("Loaded catalog from network for /\(board.id)/: \(remoteThreads.count) threads")
             let thumbURLs = remoteThreads.compactMap { $0.attachment?.thumbnailURL(boardID: board.id) }
             imageLoader.prefetch(urls: thumbURLs)
-            errorMessage = nil
         } catch {
             AppLogger.error("Failed to load catalog for /\(board.id)/: \(error.localizedDescription)")
             errorMessage = error.localizedDescription

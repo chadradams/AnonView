@@ -25,6 +25,7 @@ public final class ThreadViewModel: ObservableObject {
         AppLogger.info("Loading posts for /\(boardID)/ thread \(threadID) (forceRefresh: \(forceRefresh))")
         isLoading = true
         defer { isLoading = false }
+        errorMessage = nil
 
         let cacheKey = "json:thread:\(boardID):\(threadID)"
         if !forceRefresh,
@@ -42,7 +43,6 @@ public final class ThreadViewModel: ObservableObject {
             AppLogger.info("Loaded posts from network for /\(boardID)/ thread \(threadID): \(remotePosts.count)")
             let thumbURLs = remotePosts.compactMap { $0.attachment?.thumbnailURL(boardID: boardID) }
             imageLoader.prefetch(urls: thumbURLs)
-            errorMessage = nil
         } catch {
             AppLogger.error("Failed to load posts for /\(boardID)/ thread \(threadID): \(error.localizedDescription)")
             errorMessage = error.localizedDescription

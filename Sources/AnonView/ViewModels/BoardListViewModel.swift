@@ -19,6 +19,7 @@ public final class BoardListViewModel: ObservableObject {
         AppLogger.info("Loading boards (forceRefresh: \(forceRefresh))")
         isLoading = true
         defer { isLoading = false }
+        errorMessage = nil
 
         let cacheKey = "json:boards"
 
@@ -36,7 +37,6 @@ public final class BoardListViewModel: ObservableObject {
             let payload = try JSONEncoder().encode(BoardListResponse(boards: boards))
             cacheManager.cache(data: payload, forKey: cacheKey)
             AppLogger.info("Loaded boards from network: \(boards.count)")
-            errorMessage = nil
         } catch {
             AppLogger.error("Failed to load boards: \(error.localizedDescription)")
             errorMessage = error.localizedDescription
