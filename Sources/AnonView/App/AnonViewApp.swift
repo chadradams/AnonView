@@ -86,6 +86,7 @@ private struct SplitRootView: View {
         } detail: {
             if let selectedBoard, let selectedThread {
                 ThreadDetailView(board: selectedBoard, threadID: selectedThread.id)
+                    .id(selectedThread.id)
             } else {
                 ContentUnavailableView("Select a Thread", systemImage: "bubble.left.and.bubble.right")
             }
