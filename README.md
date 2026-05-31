@@ -9,7 +9,7 @@ A 4chan app for iOS and macOS.
 - Swift 6.1+ toolchain (for command-line build/test)
 
 ### Run locally (Xcode)
-1. Open `/home/runner/work/AnonView/AnonView/AnonView.xcodeproj` in Xcode.
+1. Open `AnonView.xcodeproj` in Xcode (from the root of your local clone).
 2. Choose either `AnonView iOS` (simulator/device) or `AnonView macOS`.
 3. Run the selected app target.
 
@@ -20,7 +20,7 @@ xcodebuild -project AnonView.xcodeproj -scheme "AnonView macOS" -destination "ge
 ```
 
 ### Build and test locally (CLI)
-From `/home/runner/work/AnonView/AnonView`:
+From the root of your local clone:
 
 ```bash
 swift build

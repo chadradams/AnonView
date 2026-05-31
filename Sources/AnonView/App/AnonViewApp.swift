@@ -1,10 +1,23 @@
 #if canImport(SwiftUI)
 import SwiftUI
+#if os(macOS)
+import AppKit
+
+private class MacAppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.activate(ignoringOtherApps: true)
+    }
+}
+#endif
 
 @main
 public struct AnonViewApp: App {
     // Run cleanup only after meaningful inactivity to avoid unnecessary churn.
     private static let minimumBackgroundDurationForCacheCleanup: TimeInterval = 15 * 60
+
+    #if os(macOS)
+    @NSApplicationDelegateAdaptor(MacAppDelegate.self) private var appDelegate
+    #endif
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var selectedBoard: Board?
