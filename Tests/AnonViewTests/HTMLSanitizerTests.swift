@@ -7,6 +7,6 @@ import Testing
 }
 
 @Test func commentMarkdownConvertsQuoteLinks() {
-    let raw = #"Link: <a href="#p123">&gt;&gt;123</a>"#
+    let raw = ##"Link: <a href="#p123">&gt;&gt;123</a>"##
     #expect(raw.commentMarkdown == "Link: [>>123](anonview://post/123)")
 }
