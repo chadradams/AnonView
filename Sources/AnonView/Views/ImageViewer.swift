@@ -314,11 +314,13 @@ public struct ImageViewer: View {
 
     private func moveToNextImage() {
         guard canMoveNext else { return }
+        dragOffset = 0
         currentIndex += 1
     }
 
     private func moveToPreviousImage() {
         guard canMovePrevious else { return }
+        dragOffset = 0
         currentIndex -= 1
     }
 
