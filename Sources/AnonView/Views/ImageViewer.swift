@@ -3,6 +3,7 @@ import SwiftUI
 import ImageIO
 #if canImport(AVKit)
 import AVKit
+import AVFoundation
 #endif
 #if canImport(UIKit)
 import UIKit
@@ -22,6 +23,8 @@ public struct ImageViewer: View {
     @State private var videoPlayer: AVPlayer?
     @State private var currentIndex = 0
     @State private var loadFailed = false
+    @State private var videoUnsupported = false
+    @State private var dragOffset: CGFloat = 0
 
     private let imageLoader = ImageLoader()
 
@@ -41,25 +44,28 @@ public struct ImageViewer: View {
                 Text("No images available")
                     .foregroundStyle(.white)
             } else if let attachment = currentAttachment {
-                if attachment.isVideo {
-                    videoView()
-                } else if let data = fullImageData {
-                    fullMediaView(data: data, mediaType: attachment.mediaType)
-                } else if let thumb = thumbnailImage {
-                    thumb
-                        .resizable()
-                        .scaledToFit()
-                        .overlay(alignment: .center) {
-                            ProgressView()
-                                .tint(.white)
-                        }
-                } else if loadFailed {
-                    Text("Unable to load image")
-                        .foregroundStyle(.white)
-                } else {
-                    ProgressView()
-                        .tint(.white)
+                Group {
+                    if attachment.isVideo {
+                        videoView()
+                    } else if let data = fullImageData {
+                        fullMediaView(data: data, mediaType: attachment.mediaType)
+                    } else if let thumb = thumbnailImage {
+                        thumb
+                            .resizable()
+                            .scaledToFit()
+                            .overlay(alignment: .center) {
+                                ProgressView()
+                                    .tint(.white)
+                            }
+                    } else if loadFailed {
+                        Text("Unable to load image")
+                            .foregroundStyle(.white)
+                    } else {
+                        ProgressView()
+                            .tint(.white)
+                    }
                 }
+                .offset(y: dragOffset)
             }
 
             VStack {
@@ -83,7 +89,7 @@ public struct ImageViewer: View {
                     Button {
                         moveToPreviousImage()
                     } label: {
-                        Image(systemName: "chevron.left.circle.fill")
+                        Image(systemName: "chevron.down.circle.fill")
                             .font(.largeTitle)
                     }
                     .buttonStyle(.plain)
@@ -104,7 +110,7 @@ public struct ImageViewer: View {
                     Button {
                         moveToNextImage()
                     } label: {
-                        Image(systemName: "chevron.right.circle.fill")
+                        Image(systemName: "chevron.up.circle.fill")
                             .font(.largeTitle)
                     }
                     .buttonStyle(.plain)
@@ -116,16 +122,7 @@ public struct ImageViewer: View {
             }
         }
         .contentShape(Rectangle())
-        .gesture(
-            DragGesture(minimumDistance: 20)
-                .onEnded { value in
-                    if value.translation.width <= -60 {
-                        moveToNextImage()
-                    } else if value.translation.width >= 60 {
-                        moveToPreviousImage()
-                    }
-                }
-        )
+        .gesture(navigationDragGesture)
         .onAppear {
             if attachments.isEmpty {
                 loadFailed = true
@@ -141,6 +138,8 @@ public struct ImageViewer: View {
             fullImageData = nil
             resetVideoPlayer()
             loadFailed = false
+            videoUnsupported = false
+            dragOffset = 0
             zoom = 1
 
             // Load the JPEG thumbnail immediately so something is visible right away.
@@ -151,7 +150,7 @@ public struct ImageViewer: View {
 
             // Videos cannot be decoded as images; the thumbnail + play overlay is enough.
             if attachment.isVideo {
-                configureVideoPlayer(for: attachment)
+                await configureVideoPlayer(for: attachment)
                 return
             }
 
@@ -201,7 +200,9 @@ public struct ImageViewer: View {
     private func videoView() -> some View {
         ZStack {
             #if canImport(AVKit)
-            if let videoPlayer {
+            if videoUnsupported {
+                unsupportedVideoView()
+            } else if let videoPlayer {
                 VideoPlayer(player: videoPlayer)
                     .scaledToFit()
             } else if let thumb = thumbnailImage {
@@ -220,6 +221,30 @@ public struct ImageViewer: View {
             }
             videoPlayIcon
             #endif
+        }
+    }
+
+    /// Shown when the platform's media stack cannot play the video (e.g. WebM on Apple platforms).
+    @ViewBuilder
+    private func unsupportedVideoView() -> some View {
+        ZStack {
+            if let thumb = thumbnailImage {
+                thumb
+                    .resizable()
+                    .scaledToFit()
+                    .overlay(Color.black.opacity(0.5))
+            }
+            VStack(spacing: 8) {
+                Image(systemName: "play.slash.fill")
+                    .font(.system(size: 56))
+                    .foregroundStyle(.white.opacity(0.85))
+                Text("This video format can't be played here")
+                    .font(.callout)
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
+            .shadow(radius: 8)
         }
     }
 
@@ -263,22 +288,63 @@ public struct ImageViewer: View {
     private var canMoveNext: Bool { currentIndex < attachments.count - 1 }
     private var canMovePrevious: Bool { currentIndex > 0 }
 
+    /// Vertical drag gesture: the media follows the finger and a sufficient swipe
+    /// advances to the next (swipe up) or previous (swipe down) item.
+    /// Disabled while zoomed in so the magnification gesture can be used freely.
+    private var navigationDragGesture: some Gesture {
+        DragGesture(minimumDistance: 20)
+            .onChanged { value in
+                guard zoom == 1 else { return }
+                dragOffset = value.translation.height
+            }
+            .onEnded { value in
+                guard zoom == 1 else { return }
+                let threshold: CGFloat = 60
+                if value.translation.height <= -threshold, canMoveNext {
+                    moveToNextImage()
+                } else if value.translation.height >= threshold, canMovePrevious {
+                    moveToPreviousImage()
+                } else {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        dragOffset = 0
+                    }
+                }
+            }
+    }
+
     private func moveToNextImage() {
         guard canMoveNext else { return }
+        dragOffset = 0
         currentIndex += 1
     }
 
     private func moveToPreviousImage() {
         guard canMovePrevious else { return }
+        dragOffset = 0
         currentIndex -= 1
     }
 
-    private func configureVideoPlayer(for attachment: ImageAttachment) {
+    private func configureVideoPlayer(for attachment: ImageAttachment) async {
         guard let mediaURL = attachment.imageURL(boardID: boardID) else {
             videoPlayer = nil
+            videoUnsupported = true
             return
         }
-        videoPlayer = AVPlayer(url: mediaURL)
+        #if canImport(AVKit)
+        // Probe playability so unsupported formats (e.g. WebM) show a clear
+        // fallback instead of a silently blank player.
+        let asset = AVURLAsset(url: mediaURL)
+        let isPlayable = (try? await asset.load(.isPlayable)) ?? false
+        guard isPlayable else {
+            AppLogger.error("Unsupported video format: \(mediaURL.lastPathComponent)")
+            videoPlayer = nil
+            videoUnsupported = true
+            return
+        }
+        videoPlayer = AVPlayer(playerItem: AVPlayerItem(asset: asset))
+        #else
+        videoUnsupported = true
+        #endif
     }
 
     private func resetVideoPlayer() {
